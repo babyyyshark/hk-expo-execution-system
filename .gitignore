@@ -1,0 +1,4 @@
+node_modules/
+dist/
+server/expo.db
+.openai/hosting.json
