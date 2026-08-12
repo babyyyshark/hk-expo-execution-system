@@ -1,5 +1,6 @@
 ﻿import React, { useEffect, useMemo, useState } from "react";
 import { defaultDrafts } from "./data";
+import { getShareConfig, loadRemoteState, saveRemoteState, saveShareConfig } from "./sharedStore";
 
 const storageKey = "hk-expo-execution-system-v1";
 const tabs = ["总控台", "展会信息", "攻略", "样品管理", "客户速记卡", "会展英语", "AI辅助"];
@@ -21,6 +22,10 @@ function loadState() {
 export default function App() {
   const [state, setState] = useState(loadState);
   const [isHydrated, setIsHydrated] = useState(false);
+  const [shareConfig, setShareConfig] = useState(getShareConfig);
+  const [showShareSetup, setShowShareSetup] = useState(false);
+  const [shareDraft, setShareDraft] = useState(() => getShareConfig());
+  const [syncStatus, setSyncStatus] = useState("本地模式");
   const [activeTab, setActiveTab] = useState("总控台");
   const [travelSubTab, setTravelSubTab] = useState("行程");
   const [diningSubTab, setDiningSubTab] = useState("员工用餐");
@@ -51,29 +56,66 @@ export default function App() {
 
   useEffect(() => {
     let cancelled = false;
-    fetch("/api/state")
-      .then((res) => (res.ok ? res.json() : Promise.reject(new Error("load failed"))))
+    setSyncStatus(shareConfig.url && shareConfig.anonKey ? "正在读取共享数据..." : "本地模式");
+    loadRemoteState(shareConfig)
       .then((data) => {
-        if (!cancelled && data) {
+        if (cancelled) return;
+        if (data) {
           setState((prev) => ({ ...prev, ...data }));
           setAiOutput(data.aiOutput || "");
-          setIsHydrated(true);
+          setSyncStatus("已连接共享数据");
+        } else {
+          setSyncStatus(shareConfig.url && shareConfig.anonKey ? "共享库暂无数据，保存后创建" : "本地模式");
         }
       })
-      .catch(() => setIsHydrated(true));
+      .catch(() => {
+        if (!cancelled) setSyncStatus("共享连接失败，当前为本地显示");
+      })
+      .finally(() => {
+        if (!cancelled) setIsHydrated(true);
+      });
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [shareConfig]);
 
   useEffect(() => {
     if (!isHydrated) return;
-    fetch("/api/state", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...state, aiOutput })
-    }).catch(() => {});
-  }, [state, aiOutput, isHydrated]);
+    const data = { ...state, aiOutput };
+    localStorage.setItem(storageKey, JSON.stringify(data));
+    if (!shareConfig.url || !shareConfig.anonKey) {
+      setSyncStatus("本地模式");
+      return;
+    }
+    setSyncStatus("保存中...");
+    const timer = window.setTimeout(() => {
+      saveRemoteState(shareConfig, data)
+        .then(() => setSyncStatus(`已同步 ${new Date().toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" })}`))
+        .catch(() => setSyncStatus("保存失败，请检查 Supabase 配置"));
+    }, 500);
+    return () => window.clearTimeout(timer);
+  }, [state, aiOutput, isHydrated, shareConfig]);
+
+  useEffect(() => {
+    if (!shareConfig.url || !shareConfig.anonKey) return;
+    const timer = window.setInterval(() => {
+      loadRemoteState(shareConfig)
+        .then((data) => {
+          if (!data) return;
+          setState((prev) => ({ ...prev, ...data }));
+          setAiOutput(data.aiOutput || "");
+        })
+        .catch(() => setSyncStatus("自动同步失败，稍后重试"));
+    }, 15000);
+    return () => window.clearInterval(timer);
+  }, [shareConfig]);
+
+  const applyShareConfig = () => {
+    saveShareConfig(shareDraft);
+    setShareConfig({ ...shareDraft, source: "local" });
+    setShowShareSetup(false);
+    setIsHydrated(false);
+  };
 
   const clients = Array.isArray(state.clients) ? state.clients : [];
   const samples = Array.isArray(state.samples) ? state.samples : [];
@@ -199,6 +241,7 @@ export default function App() {
         <div className="card-actions">
           <button className="primary" onClick={generateAI}>一键生成客户AI建议</button>
           <button className="secondary" onClick={() => setShowQuickCard(true)}>新增客户</button>
+          <button className="secondary" onClick={() => setShowShareSetup(true)}>共享设置</button>
         </div>
       </aside>
 
@@ -212,8 +255,13 @@ export default function App() {
           <div className="card-actions">
             <button className="primary" onClick={generateAI}>一键生成客户AI建议</button>
             <button className="secondary" onClick={() => setShowQuickCard(true)}>新增客户</button>
+            <button className="secondary" onClick={() => setShowShareSetup(true)}>共享设置</button>
           </div>
         </header>
+        <div className={shareConfig.url && shareConfig.anonKey ? "sync-banner online" : "sync-banner"}>
+          <strong>{shareConfig.url && shareConfig.anonKey ? "共享模式" : "本地模式"}</strong>
+          <span>{syncStatus}</span>
+        </div>
 
         {activeTab === "总控台" && (
           <Card title="总览">
@@ -315,6 +363,28 @@ export default function App() {
         )}
 
         {activeTab === "AI辅助" && <Card title="AI辅助输出"><pre className="output">{aiOutput || "点击生成后，这里会显示接待方案、英文话术、WhatsApp 问候语和跟进计划。"}</pre></Card>}
+
+        {showShareSetup && (
+          <div className="modal-backdrop" onClick={() => setShowShareSetup(false)}>
+            <div className="modal" onClick={(e) => e.stopPropagation()}>
+              <div className="modal-head">
+                <h2>共享保存设置</h2>
+                <button className="icon-button" onClick={() => setShowShareSetup(false)}>×</button>
+              </div>
+              <div className="section-block">
+                <p className="muted">填入 Supabase Project URL 和 anon public key 后，大家打开同一个网址就会读写同一份数据。</p>
+              </div>
+              <div className="modal-grid">
+                <label>Supabase Project URL<input value={shareDraft.url || ""} onChange={(e) => setShareDraft((p) => ({ ...p, url: e.target.value }))} placeholder="https://xxxx.supabase.co" /></label>
+                <label>Anon Public Key<input value={shareDraft.anonKey || ""} onChange={(e) => setShareDraft((p) => ({ ...p, anonKey: e.target.value }))} placeholder="eyJhbGci..." /></label>
+              </div>
+              <div className="modal-actions">
+                <button className="secondary" onClick={() => setShowShareSetup(false)}>取消</button>
+                <button className="primary" onClick={applyShareConfig}>保存共享设置</button>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );

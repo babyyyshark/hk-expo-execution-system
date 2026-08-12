@@ -1,6 +1,6 @@
 export const seedData = {
   exhibition: {
-    name: "2026香港亚洲果蔬展",
+    name: "2026 香港亚洲果蔬展 Asia Fruit Logistica",
     dateRange: "2026/09/02 - 2026/09/04",
     venue: "香港亚洲国际博览馆 AsiaWorld-Expo",
     booth: "5馆 5B32",
@@ -21,15 +21,15 @@ export const seedData = {
     {
       id: 1,
       person: "张三",
-      ticketStatus: "31号买票",
+      ticketStatus: "31号已买票",
       departureTime: "2026/08/31",
       arrivalTime: "2026/08/31",
       origin: "福州",
       destination: "丽豪航天城酒店",
-      trainNo: "福州→深圳北，深圳北→香港西九龙",
-      routeNote: "香港西九龙站步行连接通道 → 九龙站 → 机场快线 → EXIT B 出站，步行到丽豪航天城酒店",
-      charterInfo: "深圳到香港包车，直接到酒店",
-      charterNote: "适合多人同行，行李多，减少换乘"
+      trainNo: "福州→深圳北",
+      routeNote: "深圳到香港改为包车，直接到酒店。",
+      charterInfo: "深圳到香港包车，直接到丽豪航天城酒店。",
+      charterNote: "适合多人同行、行李多，减少换乘。"
     }
   ],
   checklist: [
@@ -44,10 +44,10 @@ export const seedData = {
   ],
   restaurants: {
     staff: [
-      { id: 1, restaurant: "丽豪航天城酒店餐厅", location: "酒店内", transport: "步行", note: "最方便，适合赶时间" }
+      { id: 1, restaurant: "丽豪航天城酒店餐厅", location: "酒店内", transport: "步行", note: "最方便，适合赶时间。" }
     ],
     client: [
-      { id: 1, restaurant: "酒店附近粤菜餐厅", reservation: "建议预约", contact: "电话待补充", distance: "车程10-15分钟", transport: "出租车", note: "适合正式接待" }
+      { id: 1, restaurant: "酒店附近粤菜餐厅", reservation: "建议预约", contact: "电话待补充", distance: "车程10-15分钟", transport: "出租车", note: "适合正式接待。" }
     ]
   },
   samples: [

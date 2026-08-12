@@ -57,6 +57,24 @@ textarea { min-height: 92px; resize: vertical; }
 .eyebrow { color: #4b6b8d; margin: 0 0 8px; }
 h1 { margin: 0; font-size: 34px; }
 .hero-text { color: #5b6f83; max-width: 720px; }
+.sync-banner {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  width: fit-content;
+  margin: -4px 0 18px;
+  padding: 9px 13px;
+  border: 1px solid rgba(20,40,70,0.12);
+  border-radius: 999px;
+  background: #fff7e6;
+  color: #7a5100;
+  font-size: 13px;
+}
+.sync-banner.online {
+  background: #eaf8ef;
+  color: #1f6b3d;
+  border-color: rgba(31,107,61,0.18);
+}
 .primary {
   background: #163b73;
   color: #fff;
