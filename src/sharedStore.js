@@ -1,6 +1,8 @@
 const configKey = "hk-expo-supabase-config";
 const tableName = "app_state";
 const rowId = "main";
+const bundledUrl = "https://lrygptxunzthouhipwzs.supabase.co";
+const bundledAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxyeWdwdHh1bnp0aG91aGlwd3pzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY1MTE1NTEsImV4cCI6MjEwMjA4NzU1MX0.E3X7T_syYy9u566dCT3OJERD4vDfYYYbTJbv-7cuSi0";
 
 export function getShareConfig() {
   const envUrl = import.meta.env.VITE_SUPABASE_URL || "";
@@ -8,6 +10,10 @@ export function getShareConfig() {
 
   if (envUrl && envKey) {
     return { url: envUrl, anonKey: envKey, source: "env" };
+  }
+
+  if (bundledUrl && bundledAnonKey) {
+    return { url: bundledUrl, anonKey: bundledAnonKey, source: "bundled" };
   }
 
   try {
