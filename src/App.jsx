@@ -10,6 +10,95 @@ const quickActions = [
   { label: "发送产品资料", tip: "客户想了解产品、规格、包装、供应情况" },
   { label: "发送报价", tip: "客户有明确采购或询价需求" }
 ];
+const englishSections = [
+  {
+    title: "快速开场",
+    badge: "Greeting",
+    lines: [
+      ["自然迎接", "Hello, welcome to our booth. Please feel free to have a look.", "您好，欢迎来到我们的展位，您可以先随便看看。"],
+      ["轻松破冰", "Is this your first time visiting Asia Fruit Logistica?", "这是您第一次来亚洲果蔬展吗？"],
+      ["快速判断需求", "Are you mainly looking for fresh fruits, vegetables, frozen products, or seafood?", "您主要在找水果、蔬菜、冻品还是海鲜？"],
+      ["留下沟通空间", "If anything is interesting, I can give you a quick introduction.", "如果您对某个产品感兴趣，我可以简单给您介绍一下。"]
+    ]
+  },
+  {
+    title: "介绍自己和公司",
+    badge: "Company Intro",
+    lines: [
+      ["自我介绍", "My name is Krystal. I am responsible for overseas business and customer follow-up.", "我是 Krystal，主要负责海外业务和客户跟进。"],
+      ["公司名称", "We are Fuzhou Xiangshan Fruit Co., Ltd., a fruit and food trading company based in Fuzhou, China.", "我们是福州向善果业有限公司，是一家位于福州的水果食品贸易公司。"],
+      ["公司定位", "We work as a sourcing and export partner, helping customers match reliable factories and suitable products.", "我们作为采购和出口合作伙伴，帮客户匹配可靠工厂和合适产品。"],
+      ["合作资源", "Our supply network covers fruit production areas across China, and we also cooperate with suppliers from Vietnam and Taiwan.", "我们的供应网络覆盖中国多个水果产区，也和越南、台湾供应商有合作。"]
+    ]
+  },
+  {
+    title: "贸易公司优势",
+    badge: "Why Us",
+    lines: [
+      ["整合供应", "Our advantage is not only one product. We can integrate different products for one customer.", "我们的优势不是只做单一产品，而是能为客户整合多种产品。"],
+      ["拼柜能力", "We can arrange mixed container loading, so you can combine different items in one shipment.", "我们可以安排拼柜，把不同品类组合到一个柜里。"],
+      ["定制方案", "We can customize the product combination according to your market, season, budget, and packing requirements.", "我们可以根据您的市场、季节、预算和包装要求定制组合方案。"],
+      ["降低沟通成本", "Instead of talking to many factories separately, you can work with us as one contact window.", "您不用分别对接很多工厂，可以把我们作为统一沟通窗口。"]
+    ]
+  },
+  {
+    title: "经验和品类",
+    badge: "Experience",
+    lines: [
+      ["做过多久", "We have been working in fruit sourcing and export for many years, with stable factory and farm resources.", "我们多年从事水果采购和出口，有稳定的工厂和基地资源。"],
+      ["做过国家", "We have experience serving customers from the Middle East, Southeast Asia, Korea, Taiwan, and other markets.", "我们有服务中东、东南亚、韩国、台湾等市场客户的经验。"],
+      ["水果品类", "For fruits, we can discuss blueberries, cherries, citrus, grapes, apples, pears, and seasonal fruits.", "水果方面可以沟通蓝莓、车厘子、柑橘、葡萄、苹果、梨和季节性水果。"],
+      ["蔬菜冻品", "We can also help with vegetables, frozen products, seafood, and other food items depending on your demand.", "也可以根据需求协助蔬菜、冻品、海鲜和其他食品品类。"]
+    ]
+  },
+  {
+    title: "付款和账期",
+    badge: "Payment",
+    lines: [
+      ["基础付款", "For new cooperation, we usually start with safer payment terms for both sides.", "新合作通常会先采用对双方都更安全的付款方式。"],
+      ["优质客户", "For qualified customers, we can apply for credit insurance support and discuss better payment terms.", "对于优质客户，我们可以申请中信保支持，再讨论更好的付款条件。"],
+      ["OA账期", "After credit approval, OA terms may be possible depending on the customer background and order scale.", "通过信用审核后，可以根据客户背景和订单规模讨论 OA 账期。"],
+      ["资金支持", "We also work with Fujian Huaxi Import and Export Co., Ltd. as a financing partner, which helps reduce funding pressure.", "我们也有福建华禧进出口有限责任公司作为垫资合作方，能减轻资金压力。"]
+    ]
+  },
+  {
+    title: "结束和跟进",
+    badge: "Follow-up",
+    lines: [
+      ["加 WhatsApp", "May I add your WhatsApp? I can send product photos, packing details, and availability after the show.", "我可以加您 WhatsApp 吗？展后我把产品照片、包装和供应情况发给您。"],
+      ["要资料", "I will send you our product list and company profile after the exhibition.", "展会后我会发您产品目录和公司介绍。"],
+      ["问报价条件", "To quote accurately, may I know your destination port, preferred packing, and estimated quantity?", "为了准确报价，我想确认目的港、包装要求和预计数量。"],
+      ["礼貌收尾", "Thank you for visiting us. I will follow up with you shortly.", "感谢您来我们展位，我会尽快跟进您。"]
+    ]
+  }
+];
+const tradeTerms = [
+  ["贸易公司", "trading company"],
+  ["供应商整合", "supplier integration"],
+  ["拼柜", "mixed container loading / consolidated shipment"],
+  ["整柜", "full container load / FCL"],
+  ["散货", "less than container load / LCL"],
+  ["产地", "origin / production area"],
+  ["规格", "specification"],
+  ["包装", "packing / packaging"],
+  ["纸箱", "carton"],
+  ["托盘", "pallet"],
+  ["柜量", "container quantity"],
+  ["目的港", "destination port"],
+  ["冷链", "cold chain"],
+  ["冷冻", "frozen"],
+  ["保鲜", "fresh keeping"],
+  ["采购量", "purchase volume"],
+  ["目标价", "target price"],
+  ["到岸价", "CIF price"],
+  ["离岸价", "FOB price"],
+  ["付款方式", "payment terms"],
+  ["信用保险", "credit insurance"],
+  ["中信保", "Sinosure / China Export & Credit Insurance Corporation"],
+  ["OA账期", "OA terms / open account terms"],
+  ["垫资方", "financing partner"],
+  ["国企", "state-owned enterprise"]
+];
 
 function Card({ title, action, children }) {
   return <section className="card"><div className="card-head"><h2>{title}</h2>{action}</div>{children}</section>;
@@ -349,15 +438,42 @@ export default function App() {
 
         {activeTab === "会展英语" && (
           <Card title="会展水果外贸英语">
-            <div className="plan-grid">
-              {[
-                ["开场问候", "Hello, welcome to our booth. Nice to meet you.", "您好，欢迎来到我们的展位，很高兴见到您。"],
-                ["介绍产品", "We supply fresh fruits, vegetables, frozen products, and seafood.", "我们供应水果、蔬菜、冻品和海鲜。"],
-                ["询问需求", "What products are you looking for this season?", "您这季主要在找哪些产品？"],
-                ["价格沟通", "Could you please share your target price and packing requirement?", "您方便告诉我目标价格和包装要求吗？"],
-                ["交换联系方式", "May I have your WhatsApp so I can send more details?", "我可以加您的 WhatsApp，把更多资料发给您吗？"],
-                ["后续跟进", "I will follow up with you after the exhibition.", "展会结束后我会继续跟进您。"]
-              ].map(([title, en, zh]) => <div className="plan-card" key={title}><h3>{title}</h3><p>{en}</p><p className="muted">{zh}</p></div>)}
+            <div className="english-hero">
+              <div>
+                <p className="eyebrow">现场原则：先建立信任，再判断需求，最后留下联系方式</p>
+                <h3>不是一上来报价格，而是快速说明“我们是谁、能帮客户解决什么”。</h3>
+              </div>
+              <div className="english-tip">Tip: 先问市场和品类，再聊包装、数量、目的港，最后再报价。</div>
+            </div>
+            <div className="english-grid">
+              {englishSections.map((section) => (
+                <div className="english-card" key={section.title}>
+                  <div className="english-card-head">
+                    <h3>{section.title}</h3>
+                    <span>{section.badge}</span>
+                  </div>
+                  <div className="phrase-list">
+                    {section.lines.map(([scene, en, zh]) => (
+                      <div className="phrase" key={`${section.title}-${scene}`}>
+                        <strong>{scene}</strong>
+                        <p className="phrase-en">{en}</p>
+                        <p className="muted">{zh}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="section-block">
+              <div className="section-title">专业术语 Quick Terms</div>
+              <div className="terms-grid">
+                {tradeTerms.map(([zh, en]) => (
+                  <div className="term-item" key={zh}>
+                    <span>{zh}</span>
+                    <strong>{en}</strong>
+                  </div>
+                ))}
+              </div>
             </div>
           </Card>
         )}
