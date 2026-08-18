@@ -129,6 +129,7 @@ export default function App() {
   const [showQuickCard, setShowQuickCard] = useState(false);
   const [actionHint, setActionHint] = useState("");
   const [actionState, setActionState] = useState({});
+  const [speakingText, setSpeakingText] = useState("");
   const [draft, setDraft] = useState({
     companyName: "",
     country: "迪拜",
@@ -204,6 +205,26 @@ export default function App() {
     setShareConfig({ ...shareDraft, source: "local" });
     setShowShareSetup(false);
     setIsHydrated(false);
+  };
+
+  const speakEnglish = (text) => {
+    if (!window.speechSynthesis) {
+      window.alert("当前浏览器不支持语音朗读，请换 Chrome / Edge 试试。");
+      return;
+    }
+
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    const voices = window.speechSynthesis.getVoices();
+    const voice = voices.find((item) => item.lang?.toLowerCase().startsWith("en-us")) || voices.find((item) => item.lang?.toLowerCase().startsWith("en"));
+    if (voice) utterance.voice = voice;
+    utterance.lang = voice?.lang || "en-US";
+    utterance.rate = 0.86;
+    utterance.pitch = 1;
+    utterance.onstart = () => setSpeakingText(text);
+    utterance.onend = () => setSpeakingText("");
+    utterance.onerror = () => setSpeakingText("");
+    window.speechSynthesis.speak(utterance);
   };
 
   const clients = Array.isArray(state.clients) ? state.clients : [];
@@ -455,7 +476,10 @@ export default function App() {
                   <div className="phrase-list">
                     {section.lines.map(([scene, en, zh]) => (
                       <div className="phrase" key={`${section.title}-${scene}`}>
-                        <strong>{scene}</strong>
+                        <div className="phrase-head">
+                          <strong>{scene}</strong>
+                          <button className={speakingText === en ? "speak-button active" : "speak-button"} onClick={() => speakEnglish(en)} type="button">{speakingText === en ? "朗读中" : "播放"}</button>
+                        </div>
                         <p className="phrase-en">{en}</p>
                         <p className="muted">{zh}</p>
                       </div>
@@ -470,7 +494,10 @@ export default function App() {
                 {tradeTerms.map(([zh, en]) => (
                   <div className="term-item" key={zh}>
                     <span>{zh}</span>
-                    <strong>{en}</strong>
+                    <div className="term-line">
+                      <strong>{en}</strong>
+                      <button className={speakingText === en ? "speak-button mini active" : "speak-button mini"} onClick={() => speakEnglish(en)} type="button">{speakingText === en ? "读" : "听"}</button>
+                    </div>
                   </div>
                 ))}
               </div>

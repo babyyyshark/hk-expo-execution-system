@@ -218,6 +218,37 @@ h1 { margin: 0; font-size: 34px; }
 .phrase strong {
   color: #163b73;
 }
+.phrase-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+}
+.speak-button {
+  flex: 0 0 auto;
+  border: 1px solid rgba(22,59,115,0.18);
+  border-radius: 999px;
+  background: #fff;
+  color: #163b73;
+  padding: 6px 10px;
+  font-size: 12px;
+  cursor: pointer;
+}
+.speak-button::before {
+  content: "▶ ";
+  font-size: 10px;
+}
+.speak-button.active {
+  background: #163b73;
+  color: #fff;
+  border-color: #163b73;
+}
+.speak-button.active::before {
+  content: "♪ ";
+}
+.speak-button.mini {
+  padding: 4px 8px;
+}
 .phrase p {
   margin: 6px 0 0;
 }
@@ -247,6 +278,12 @@ h1 { margin: 0; font-size: 34px; }
   color: #10213a;
   font-size: 14px;
   line-height: 1.35;
+}
+.term-line {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: center;
 }
 .tips { margin-top: 16px; display: grid; gap: 10px; color: #31455d; }
 .timeline { display: grid; gap: 14px; }
