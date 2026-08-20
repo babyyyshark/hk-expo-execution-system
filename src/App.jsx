@@ -62,6 +62,28 @@ const englishSections = [
     ]
   },
   {
+    title: "日常转接",
+    badge: "Handoff",
+    lines: [
+      ["同事负责", "Kevin is in charge of this part. I will ask him to send it to you.", "这部分是 Kevin 负责的，我请他传给您。"],
+      ["帮忙转达", "I will pass your request to the right colleague and get back to you soon.", "我会把您的需求转给对应同事，然后尽快回复您。"],
+      ["请同事联系", "I will ask my colleague to contact you directly after the exhibition.", "展会后我会请同事直接联系您。"],
+      ["资料稍后发", "I do not have the full file with me now, but I can send it to you by WhatsApp later.", "我现在手上没有完整资料，但稍后可以通过 WhatsApp 发给您。"],
+      ["确认后回复", "Let me double-check with our team first, and I will reply to you later today.", "我先和团队确认一下，今天晚些时候回复您。"]
+    ]
+  },
+  {
+    title: "现场缓冲话术",
+    badge: "Soft Reply",
+    lines: [
+      ["没听清", "Sorry, could you please say that again a little slower?", "不好意思，您可以稍微慢一点再说一遍吗？"],
+      ["暂时不确定", "I am not 100% sure about that right now. Let me confirm before giving you an answer.", "这个我现在不能百分百确定，我确认后再答复您。"],
+      ["需要记录", "Let me write this down so I can follow up properly after the show.", "我先记录一下，展会后好好跟进您。"],
+      ["请客户留信息", "Could you please leave your name card or WhatsApp? I will send you the details later.", "您方便留名片或 WhatsApp 吗？我稍后把详细资料发给您。"],
+      ["忙时安抚", "Please give me one moment. I will come back to you very soon.", "请稍等一下，我马上回来跟您沟通。"]
+    ]
+  },
+  {
     title: "结束和跟进",
     badge: "Follow-up",
     lines: [
