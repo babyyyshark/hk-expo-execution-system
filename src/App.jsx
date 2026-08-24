@@ -10,6 +10,53 @@ const quickActions = [
   { label: "发送产品资料", tip: "客户想了解产品、规格、包装、供应情况" },
   { label: "发送报价", tip: "客户有明确采购或询价需求" }
 ];
+const guideTabs = ["行程信息", "酒店信息", "餐饮信息", "接待推荐"];
+const receptionRestaurants = [
+  {
+    name: "the Jade 翠玉轩",
+    location: "丽豪航天城酒店内，近 AsiaWorld-Expo",
+    image: "https://static.okibook.com/userfiles/image/2023/03/21/641925ab587df.jpg",
+    price: "参考：商务中餐，人均约 HKD 300-600 起，按点菜/套餐浮动",
+    address: "8 Airport Expo Boulevard, Hong Kong International Airport, Chek Lap Kok",
+    booking: "建议提前向酒店餐饮部确认包厢和最低消费",
+    fit: "最适合：住酒店客户、正式但不想奔波的客户晚餐",
+    advantages: ["就在酒店内，雨天/行李多也方便", "中餐接待稳妥，适合亚洲客户", "可优先询问 private dining room / 包厢"],
+    source: "https://sccd-cn.regalhotel.com/en/regala-skycity-hotel/Restaurants-and-Bars/the-Jade"
+  },
+  {
+    name: "NUVA",
+    location: "AsiaWorld-Expo 展馆内",
+    image: "https://cdn.tatlerasia.com/tatlerasia/i/2024/01/15124506-nuva_cover_1600x1200.jpg",
+    price: "参考：中高端中餐/点心/商务餐，人均约 HKD 300-800，按菜单浮动",
+    address: "AsiaWorld-Expo, Hong Kong International Airport, Lantau",
+    booking: "展会期间很容易满位，建议提前预约并确认包厢/半私密区域",
+    fit: "最适合：客户不方便离开展馆、展中午餐或快速商务接待",
+    advantages: ["在展馆内，动线最短", "适合 PLAN C：客户不方便外出时直接接待", "环境比普通展馆餐饮更正式"],
+    source: "https://www.asiaworld-expo.com/en-us/our-services/food-beverage/nuva/"
+  },
+  {
+    name: "Man Ho Chinese Restaurant 万豪金殿",
+    location: "香港天际万豪酒店内，近 AsiaWorld-Expo",
+    image: "https://cache.marriott.com/content/dam/marriott-renditions/HKGAP/hkgap-restaurant-0041-hor-clsc.jpg",
+    price: "参考：酒店粤菜商务接待，人均约 HKD 500-900+",
+    address: "Hong Kong SkyCity Marriott Hotel, 1 Sky City Road East, Hong Kong International Airport",
+    booking: "建议提前订位，说明 business dinner / private room request",
+    fit: "最适合：重点客户、正式晚餐、需要更体面酒店环境的接待",
+    advantages: ["酒店中餐厅，商务属性强", "离展馆和丽豪航天城酒店都近", "适合重点客户深度沟通"],
+    source: "https://www.marriott.com/en-us/hotels/hkgap-hong-kong-skycity-marriott-hotel/dining/"
+  },
+  {
+    name: "Rouge 富豪中菜厅",
+    location: "香港富豪机场酒店内，机场区域",
+    image: "",
+    price: "参考：传统粤菜接待，人均约 HKD 300-700，按点菜浮动",
+    address: "Regal Airport Hotel, 9 Cheong Tat Road, Hong Kong International Airport",
+    booking: "适合提前电话确认包厢、圆桌和最低消费",
+    fit: "最适合：客户住机场酒店、需要传统粤菜圆桌接待",
+    advantages: ["机场酒店区域，交通相对确定", "粤菜选择稳妥，适合正式但不太冒险的客户", "适合不想进入市区的晚餐安排"],
+    source: "https://www.regalhotel.com/en/regal-airport-hotel/restaurants-and-bars/rouge"
+  }
+];
 const englishSections = [
   {
     title: "快速开场",
@@ -138,7 +185,7 @@ export default function App() {
   const [shareDraft, setShareDraft] = useState(() => getShareConfig());
   const [syncStatus, setSyncStatus] = useState("本地模式");
   const [activeTab, setActiveTab] = useState("总控台");
-  const [travelSubTab, setTravelSubTab] = useState("行程");
+  const [travelSubTab, setTravelSubTab] = useState("行程信息");
   const [diningSubTab, setDiningSubTab] = useState("员工用餐");
   const [selectedTravelId, setSelectedTravelId] = useState(() => loadState().travel?.[0]?.id ?? 1);
   const [selectedChecklistId, setSelectedChecklistId] = useState(() => loadState().checklist?.[0]?.id ?? 1);
@@ -418,48 +465,90 @@ export default function App() {
         )}
 
         {activeTab === "攻略" && (
-          <Card title="攻略" action={<div className="card-actions">{["行程", "清单", "酒店", "餐饮"].map((tab) => <button key={tab} className={travelSubTab === tab ? "chip active" : "chip"} onClick={() => setTravelSubTab(tab)}>{tab}</button>)}</div>}>
-            {travelSubTab === "行程" && (
-              <>
-                <div className="section-block">
-                  <div className="section-title">统一动车信息</div>
-                  <div className="info-grid">
-                    <div><span>福州-深圳北车次</span><input value={state.travel?.[0]?.trainNo || ""} onChange={(e) => updateTravel(state.travel?.[0]?.id || 1, "trainNo", e.target.value)} /></div>
-                    <div><span>出发时间</span><input value={state.travel?.[0]?.departureTime || ""} onChange={(e) => updateTravel(state.travel?.[0]?.id || 1, "departureTime", e.target.value)} /></div>
-                    <div><span>到达时间</span><input value={state.travel?.[0]?.arrivalTime || ""} onChange={(e) => updateTravel(state.travel?.[0]?.id || 1, "arrivalTime", e.target.value)} /></div>
+          <Card title="攻略" action={<div className="card-actions">{guideTabs.map((tab) => <button key={tab} className={travelSubTab === tab ? "chip active" : "chip"} onClick={() => setTravelSubTab(tab)}>{tab}</button>)}</div>}>
+            {travelSubTab === "行程信息" && (
+              <div className="guide-panel">
+                <div className="guide-hero">
+                  <div>
+                    <p className="eyebrow">9月1日出发</p>
+                    <h3>福州南 → 深圳北</h3>
+                    <p>高铁 G1609 · 08:33 - 13:06 · 约 4小时33分</p>
                   </div>
+                  <div className="guide-ticket">05车 01ABCD 座位</div>
                 </div>
-                <div className="card-actions"><button className="primary small" onClick={addTravel}>新增人员</button></div>
-                <div className="table">
-                  <div className="row head"><span>人员</span><span>是否已买票</span><span>操作</span></div>
-                  {travel.map((item, idx) => {
-                    const id = item.id ?? idx + 1;
-                    return <div key={id} className={selectedTravelId === id ? "row selected" : "row"}><span>{item.person}</span><span>{item.ticketStatus}</span><span><button className="secondary small" onClick={() => setSelectedTravelId(id)}>编辑</button> <button className="secondary small" onClick={() => deleteTravel(id)}>删除</button></span></div>;
-                  })}
+                <div className="guide-grid">
+                  <div className="guide-card"><span>日期</span><strong>2026/09/01</strong></div>
+                  <div className="guide-card"><span>车次</span><strong>G1609</strong></div>
+                  <div className="guide-card"><span>出发站</span><strong>福州南</strong></div>
+                  <div className="guide-card"><span>到达站</span><strong>深圳北</strong></div>
+                  <div className="guide-card"><span>出发时间</span><strong>08:33</strong></div>
+                  <div className="guide-card"><span>到达时间</span><strong>13:06</strong></div>
                 </div>
-                {selectedTravel && <div className="editor"><div className="info-grid"><div><span>人员</span><input value={selectedTravel.person || ""} onChange={(e) => updateTravel(selectedTravelId, "person", e.target.value)} /></div><div><span>是否已买票</span><input value={selectedTravel.ticketStatus || ""} onChange={(e) => updateTravel(selectedTravelId, "ticketStatus", e.target.value)} /></div></div></div>}
-              </>
+                <div className="section-block">
+                  <div className="section-title">提醒</div>
+                  <p className="muted">建议提前到站，证件、港澳通行证、充电宝、转换插头、名片、产品资料随身检查。深圳北后续按包车安排衔接。</p>
+                </div>
+              </div>
             )}
 
-            {travelSubTab === "清单" && (
-              <>
-                <div className="card-actions"><button className="primary small" onClick={addChecklist}>新增清单项</button></div>
-                <div className="table">
-                  <div className="row head"><span>清单项</span><span>备注</span><span>操作</span></div>
-                  {checklist.map((item) => <div key={item.id} className={selectedChecklistId === item.id ? "row selected" : "row"}><span>{item.name}</span><span>{item.note}</span><span><button className="secondary small" onClick={() => setSelectedChecklistId(item.id)}>编辑</button> <button className="secondary small" onClick={() => deleteChecklist(item.id)}>删除</button></span></div>)}
+            {travelSubTab === "酒店信息" && (
+              <div className="guide-panel">
+                <div className="guide-hero hotel">
+                  <div>
+                    <p className="eyebrow">住宿安排</p>
+                    <h3>丽豪航天城酒店</h3>
+                    <p>Regala Skycity Hotel · 近 AsiaWorld-Expo</p>
+                  </div>
+                  <div className="guide-ticket">含早</div>
                 </div>
-                {selectedChecklist && <div className="editor"><div className="info-grid"><div><span>清单项</span><input value={selectedChecklist.name} onChange={(e) => updateChecklist(selectedChecklistId, "name", e.target.value)} /></div><div><span>备注</span><input value={selectedChecklist.note || ""} onChange={(e) => updateChecklist(selectedChecklistId, "note", e.target.value)} /></div></div></div>}
-              </>
+                <div className="guide-grid">
+                  <div className="guide-card"><span>入住</span><strong>2026/09/01 15:00</strong></div>
+                  <div className="guide-card"><span>退房</span><strong>2026/09/04 12:00</strong></div>
+                  <div className="guide-card wide"><span>提前到达说明</span><strong>如果提早到，只要有空房也可以安排入住。</strong></div>
+                  <div className="guide-card wide"><span>交通</span><strong>酒店位于航天城/机场区域，去展馆和机场都比较方便。</strong></div>
+                </div>
+              </div>
             )}
 
-            {travelSubTab === "酒店" && <Card title="酒店信息"><div className="info-grid"><div><span>酒店名称</span><input value={state.hotel.name} onChange={(e) => updateField("hotel", "name", e.target.value)} /></div><div><span>入住</span><input value={state.hotel.checkIn} onChange={(e) => updateField("hotel", "checkIn", e.target.value)} /></div><div><span>退房</span><input value={state.hotel.checkOut} onChange={(e) => updateField("hotel", "checkOut", e.target.value)} /></div><div><span>地址</span><input value={state.hotel.address} onChange={(e) => updateField("hotel", "address", e.target.value)} /></div><div><span>交通</span><input value={state.hotel.transport} onChange={(e) => updateField("hotel", "transport", e.target.value)} /></div><div><span>早餐</span><input value={state.hotel.breakfast} onChange={(e) => updateField("hotel", "breakfast", e.target.value)} /></div></div></Card>}
+            {travelSubTab === "餐饮信息" && (
+              <div className="guide-panel">
+                <div className="guide-grid">
+                  <div className="guide-card"><span>早餐</span><strong>酒店含早</strong><p className="muted">出发前尽量吃早餐，展会现场节奏会很紧。</p></div>
+                  <div className="guide-card"><span>午餐</span><strong>订餐 / Keeta 外卖</strong><p className="muted">建议提前下载 Keeta，展会当天可点外卖或统一订餐。</p></div>
+                  <div className="guide-card"><span>晚餐</span><strong>暂无固定安排</strong><p className="muted">如果有重点客户，再临时按接待推荐预约。</p></div>
+                  <div className="guide-card"><span>现场建议</span><strong>备一点零食和水</strong><p className="muted">展位忙时可能没法准点吃饭。</p></div>
+                </div>
+              </div>
+            )}
 
-            {travelSubTab === "餐饮" && (
-              <>
-                <div className="card-actions">{["员工用餐", "客户接待"].map((tab) => <button key={tab} className={diningSubTab === tab ? "chip active" : "chip"} onClick={() => setDiningSubTab(tab)}>{tab}</button>)}</div>
-                {diningSubTab === "员工用餐" && <><div className="card-actions"><button className="primary small" onClick={addStaffRest}>新增餐厅</button></div><div className="table"><div className="row head"><span>餐厅</span><span>位置</span><span>交通方式</span><span>备注</span><span>操作</span></div>{staffRestaurants.map((item) => <div key={item.id} className={selectedStaffRestId === item.id ? "row selected" : "row"}><span>{item.restaurant}</span><span>{item.location}</span><span>{item.transport}</span><span>{item.note}</span><span><button className="secondary small" onClick={() => setSelectedStaffRestId(item.id)}>编辑</button></span></div>)}</div>{selectedStaffRest && <div className="editor"><div className="info-grid"><div><span>餐厅</span><input value={selectedStaffRest.restaurant} onChange={(e) => updateStaffRest(selectedStaffRestId, "restaurant", e.target.value)} /></div><div><span>位置</span><input value={selectedStaffRest.location} onChange={(e) => updateStaffRest(selectedStaffRestId, "location", e.target.value)} /></div><div><span>交通方式</span><input value={selectedStaffRest.transport} onChange={(e) => updateStaffRest(selectedStaffRestId, "transport", e.target.value)} /></div><div><span>备注</span><input value={selectedStaffRest.note || ""} onChange={(e) => updateStaffRest(selectedStaffRestId, "note", e.target.value)} /></div></div></div>}</>}
-                {diningSubTab === "客户接待" && <><div className="card-actions"><button className="primary small" onClick={addClientRest}>新增接待餐厅</button></div><div className="table"><div className="row head"><span>餐厅</span><span>是否预约</span><span>预约电话/方式</span><span>距离酒店</span><span>交通方式</span><span>备注</span><span>操作</span></div>{clientRestaurants.map((item) => <div key={item.id} className={selectedClientRestId === item.id ? "row selected" : "row"}><span>{item.restaurant}</span><span>{item.reservation}</span><span>{item.contact}</span><span>{item.distance}</span><span>{item.transport}</span><span>{item.note}</span><span><button className="secondary small" onClick={() => setSelectedClientRestId(item.id)}>编辑</button></span></div>)}</div>{selectedClientRest && <div className="editor"><div className="info-grid"><div><span>餐厅</span><input value={selectedClientRest.restaurant} onChange={(e) => updateClientRest(selectedClientRestId, "restaurant", e.target.value)} /></div><div><span>是否预约</span><input value={selectedClientRest.reservation} onChange={(e) => updateClientRest(selectedClientRestId, "reservation", e.target.value)} /></div><div><span>预约电话/方式</span><input value={selectedClientRest.contact} onChange={(e) => updateClientRest(selectedClientRestId, "contact", e.target.value)} /></div><div><span>距离酒店</span><input value={selectedClientRest.distance} onChange={(e) => updateClientRest(selectedClientRestId, "distance", e.target.value)} /></div><div><span>交通方式</span><input value={selectedClientRest.transport} onChange={(e) => updateClientRest(selectedClientRestId, "transport", e.target.value)} /></div><div><span>备注</span><input value={selectedClientRest.note || ""} onChange={(e) => updateClientRest(selectedClientRestId, "note", e.target.value)} /></div></div></div>}</>}
-              </>
+            {travelSubTab === "接待推荐" && (
+              <div className="guide-panel">
+                <div className="section-block">
+                  <div className="section-title">选择逻辑</div>
+                  <p className="muted">客户不方便外出：优先 NUVA；客户住酒店或想省时间：优先 the Jade；重点客户正式晚餐：优先 Man Ho；传统粤菜圆桌：备选 Rouge。价格为接待预算参考，实际以餐厅当日菜单和预约确认为准。</p>
+                </div>
+                <div className="restaurant-grid">
+                  {receptionRestaurants.map((restaurant) => (
+                    <article className="restaurant-card" key={restaurant.name}>
+                      {restaurant.image ? <img src={restaurant.image} alt={restaurant.name} /> : <div className="restaurant-placeholder">暂无官方照片</div>}
+                      <div className="restaurant-body">
+                        <div className="restaurant-head">
+                          <h3>{restaurant.name}</h3>
+                          <span>{restaurant.location}</span>
+                        </div>
+                        <p className="restaurant-fit">{restaurant.fit}</p>
+                        <div className="restaurant-meta"><strong>价格</strong><span>{restaurant.price}</span></div>
+                        <div className="restaurant-meta"><strong>地址</strong><span>{restaurant.address}</span></div>
+                        <div className="restaurant-meta"><strong>预约</strong><span>{restaurant.booking}</span></div>
+                        <ul className="restaurant-list">
+                          {restaurant.advantages.map((item) => <li key={item}>{item}</li>)}
+                        </ul>
+                        <a className="source-link" href={restaurant.source} target="_blank" rel="noreferrer">查看来源/预约参考</a>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </div>
             )}
           </Card>
         )}

@@ -148,6 +148,141 @@ h1 { margin: 0; font-size: 34px; }
   padding: 16px;
   border: 1px solid rgba(20,40,70,0.08);
 }
+.guide-panel {
+  display: grid;
+  gap: 16px;
+}
+.guide-hero {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  align-items: center;
+  padding: 20px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #eaf7ff 0%, #fff7e5 100%);
+  border: 1px solid rgba(20,40,70,0.08);
+}
+.guide-hero.hotel {
+  background: linear-gradient(135deg, #eef9f1 0%, #eef4ff 100%);
+}
+.guide-hero h3 {
+  margin: 0;
+  font-size: 26px;
+}
+.guide-hero p {
+  margin: 8px 0 0;
+  color: #4f6680;
+}
+.guide-ticket {
+  padding: 14px 18px;
+  border-radius: 16px;
+  background: #132238;
+  color: #fff;
+  font-weight: 800;
+  text-align: center;
+}
+.guide-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+.guide-card {
+  padding: 15px;
+  border-radius: 16px;
+  background: #fff;
+  border: 1px solid rgba(20,40,70,0.08);
+}
+.guide-card.wide {
+  grid-column: span 2;
+}
+.guide-card span {
+  display: block;
+  color: #678;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+.guide-card strong {
+  color: #10213a;
+  font-size: 18px;
+  line-height: 1.45;
+}
+.guide-card p {
+  margin: 8px 0 0;
+}
+.restaurant-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.restaurant-card {
+  overflow: hidden;
+  border-radius: 18px;
+  background: #fff;
+  border: 1px solid rgba(20,40,70,0.08);
+  box-shadow: 0 10px 28px rgba(20,40,70,0.07);
+}
+.restaurant-card img,
+.restaurant-placeholder {
+  width: 100%;
+  height: 210px;
+  object-fit: cover;
+  display: block;
+  background: linear-gradient(135deg, #eaf1f8, #fff6e8);
+}
+.restaurant-placeholder {
+  display: grid;
+  place-items: center;
+  color: #6b7d90;
+  font-weight: 700;
+}
+.restaurant-body {
+  padding: 16px;
+}
+.restaurant-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+}
+.restaurant-head h3 {
+  margin: 0;
+  font-size: 20px;
+}
+.restaurant-head span {
+  flex: 0 0 auto;
+  max-width: 190px;
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: #eef4fb;
+  color: #163b73;
+  font-size: 12px;
+  text-align: right;
+}
+.restaurant-fit {
+  margin: 12px 0;
+  color: #163b73;
+  font-weight: 700;
+}
+.restaurant-meta {
+  display: grid;
+  grid-template-columns: 54px 1fr;
+  gap: 10px;
+  margin: 9px 0;
+  color: #40566f;
+  line-height: 1.5;
+}
+.restaurant-list {
+  margin: 12px 0;
+  padding-left: 18px;
+  color: #31455d;
+}
+.source-link {
+  display: inline-flex;
+  margin-top: 4px;
+  color: #163b73;
+  font-weight: 700;
+  text-decoration: none;
+}
 .english-hero {
   display: grid;
   grid-template-columns: 1fr 280px;
@@ -417,7 +552,10 @@ h1 { margin: 0; font-size: 34px; }
 @media (max-width: 1100px) {
   .app-shell { grid-template-columns: 1fr; }
   .sidebar { position: static; }
-  .stats, .plan-grid, .ai-box, .info-grid, .preview-grid, .modal-grid, .english-hero, .english-grid, .terms-grid { grid-template-columns: 1fr; }
+  .stats, .plan-grid, .ai-box, .info-grid, .preview-grid, .modal-grid, .english-hero, .english-grid, .terms-grid, .guide-hero, .guide-grid, .restaurant-grid { grid-template-columns: 1fr; }
+  .guide-card.wide { grid-column: auto; }
+  .restaurant-head { display: grid; }
+  .restaurant-head span { max-width: none; text-align: left; }
   .row { grid-template-columns: 1fr 1fr; }
   .row.head { display: none; }
 }
