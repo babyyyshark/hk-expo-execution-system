@@ -167,6 +167,55 @@ const tradeTerms = [
   ["垫资方", "financing partner"],
   ["国企", "state-owned enterprise"]
 ];
+const englishDialogues = [
+  {
+    title: "场景一：客户路过展位，快速接待",
+    goal: "适合客户刚停下来，还没有明确问价格时使用。",
+    turns: [
+      ["Sales", "Hello, welcome to our booth. Please feel free to have a look.", "您好，欢迎来到我们的展位，您可以先随便看看。"],
+      ["Visitor", "Thank you. What kind of products do you mainly supply?", "谢谢。你们主要供应什么产品？"],
+      ["Sales", "We are a fruit and food trading company based in Fuzhou, China. We mainly help overseas customers source fruits, vegetables, frozen products, and seafood.", "我们是位于福州的水果食品贸易公司，主要帮海外客户采购水果、蔬菜、冻品和海鲜。"],
+      ["Visitor", "Do you only supply from one factory?", "你们只从一家工厂供货吗？"],
+      ["Sales", "No. Our advantage is integration. We work with different production areas and factories, so we can match suitable products according to your market.", "不是。我们的优势是整合。我们和不同产区、不同工厂合作，可以根据您的市场匹配合适产品。"],
+      ["Sales", "May I know which market you are buying for?", "方便问一下您主要做哪个市场吗？"]
+    ]
+  },
+  {
+    title: "场景二：客户想要多品类拼柜",
+    goal: "适合客户不是只买单一产品，想了解你们贸易公司价值时使用。",
+    turns: [
+      ["Visitor", "We are not looking for only one item. Can you combine different products?", "我们不是只找一个产品。你们可以组合不同产品吗？"],
+      ["Sales", "Yes, this is one of our biggest advantages. We can arrange mixed container loading for different items.", "可以，这是我们最大的优势之一。我们可以为不同产品安排拼柜。"],
+      ["Sales", "For example, if you need fruits, vegetables, and frozen products together, we can help you coordinate suppliers, packing, documents, and shipment.", "比如您需要水果、蔬菜和冻品一起出货，我们可以帮您协调供应商、包装、单证和运输。"],
+      ["Visitor", "That sounds useful. Can you customize the combination?", "这听起来不错。可以定制组合吗？"],
+      ["Sales", "Yes. We can customize it according to your market, season, budget, target price, and packing requirement.", "可以。我们可以根据您的市场、季节、预算、目标价格和包装要求定制。"],
+      ["Sales", "If you share your product list, I can check what can be combined in one shipment.", "如果您给我产品清单，我可以帮您确认哪些产品适合拼在同一票货里。"]
+    ]
+  },
+  {
+    title: "场景三：重点客户聊付款和后续跟进",
+    goal: "适合客户采购意向比较强，开始问合作方式和付款条件时使用。",
+    turns: [
+      ["Visitor", "What payment terms can you offer?", "你们可以提供什么付款方式？"],
+      ["Sales", "For new cooperation, we usually start with safer payment terms for both sides.", "新合作我们通常先采用对双方都更安全的付款方式。"],
+      ["Sales", "For qualified customers, we can apply for credit insurance support. After approval, OA terms may be possible.", "对于优质客户，我们可以申请中信保支持。通过审核后，可以讨论 OA 账期。"],
+      ["Visitor", "Do you have enough financial support for bigger orders?", "如果订单比较大，你们资金支持够吗？"],
+      ["Sales", "Yes. We also work with Fujian Huaxi Import and Export Co., Ltd. as a financing partner. It is a state-owned enterprise, so it helps reduce funding pressure.", "有的。我们也有福建华禧进出口有限责任公司作为垫资合作方，它是国企，可以减轻资金压力。"],
+      ["Sales", "May I add your WhatsApp? I will send you our company profile and product details after the exhibition.", "我可以加您 WhatsApp 吗？展后我把公司介绍和产品资料发给您。"]
+    ]
+  },
+  {
+    title: "场景四：不是自己负责，转给同事",
+    goal: "适合客户问到你不确定或不是你负责的内容，避免现场卡住。",
+    turns: [
+      ["Visitor", "Can you send me the detailed packing list for this product?", "你能发我这个产品的详细包装清单吗？"],
+      ["Sales", "This part is handled by Kevin. I will ask him to send it to you.", "这部分是 Kevin 负责的，我请他传给您。"],
+      ["Visitor", "Can he contact me directly?", "他可以直接联系我吗？"],
+      ["Sales", "Of course. Could you please leave your WhatsApp or name card? I will pass it to him after the meeting.", "当然可以。您方便留 WhatsApp 或名片吗？我会在会后转给他。"],
+      ["Sales", "Let me also write down your request, so we can follow up more accurately.", "我也先记录一下您的需求，这样后续跟进会更准确。"]
+    ]
+  }
+];
 
 function Card({ title, action, children }) {
   return <section className="card"><div className="card-head"><h2>{title}</h2>{action}</div>{children}</section>;
@@ -558,6 +607,34 @@ export default function App() {
               </div>
               <div className="english-tip">Tip: 先问市场和品类，再聊包装、数量、目的港，最后再报价。</div>
             </div>
+            <div className="dialogue-grid">
+              {englishDialogues.map((dialogue) => (
+                <div className="dialogue-card" key={dialogue.title}>
+                  <div className="dialogue-title">
+                    <div>
+                      <h3>{dialogue.title}</h3>
+                      <p>{dialogue.goal}</p>
+                    </div>
+                    <button className="speak-button" type="button" onClick={() => speakEnglish(dialogue.turns.map((turn) => `${turn[0]}: ${turn[1]}`).join(" "))}>播放整段</button>
+                  </div>
+                  <div className="dialogue-turns">
+                    {dialogue.turns.map(([role, en, zh], index) => (
+                      <div className={role === "Sales" ? "dialogue-turn sales" : "dialogue-turn visitor"} key={`${dialogue.title}-${index}`}>
+                        <div className="dialogue-role">{role === "Sales" ? "我们 Sales" : "客户 Visitor"}</div>
+                        <div className="dialogue-bubble">
+                          <div className="phrase-head">
+                            <p className="phrase-en">{en}</p>
+                            <button className={speakingText === en ? "speak-button mini active" : "speak-button mini"} onClick={() => speakEnglish(en)} type="button">{speakingText === en ? "读" : "听"}</button>
+                          </div>
+                          <p className="muted">{zh}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="section-divider">常用短句</div>
             <div className="english-grid">
               {englishSections.map((section) => (
                 <div className="english-card" key={section.title}>

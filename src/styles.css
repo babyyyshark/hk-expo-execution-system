@@ -383,6 +383,71 @@ h1 { margin: 0; font-size: 34px; }
   color: #fff;
   line-height: 1.5;
 }
+.dialogue-grid {
+  display: grid;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+.dialogue-card {
+  padding: 16px;
+  border-radius: 20px;
+  background: #fff;
+  border: 1px solid rgba(20,40,70,0.08);
+  box-shadow: 0 10px 26px rgba(20,40,70,0.06);
+}
+.dialogue-title {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: flex-start;
+  margin-bottom: 14px;
+}
+.dialogue-title h3 {
+  margin: 0;
+  font-size: 20px;
+}
+.dialogue-title p {
+  margin: 6px 0 0;
+  color: #678;
+}
+.dialogue-turns {
+  display: grid;
+  gap: 12px;
+}
+.dialogue-turn {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+}
+.dialogue-role {
+  padding-top: 10px;
+  color: #678;
+  font-size: 13px;
+  font-weight: 700;
+}
+.dialogue-bubble {
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: #f8fbff;
+  border: 1px solid rgba(20,40,70,0.07);
+}
+.dialogue-turn.sales .dialogue-bubble {
+  background: #eef7ff;
+  border-color: rgba(92,200,255,0.25);
+}
+.dialogue-turn.visitor .dialogue-bubble {
+  background: #fff9ed;
+}
+.dialogue-bubble .phrase-en {
+  margin: 0;
+}
+.section-divider {
+  margin: 20px 0 14px;
+  color: #163b73;
+  font-size: 18px;
+  font-weight: 800;
+}
 .english-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -631,6 +696,8 @@ h1 { margin: 0; font-size: 34px; }
   .guide-card.wide { grid-column: auto; }
   .restaurant-head { display: grid; }
   .restaurant-head span { max-width: none; text-align: left; }
+  .dialogue-title, .dialogue-turn { grid-template-columns: 1fr; display: grid; }
+  .dialogue-role { padding-top: 0; }
   .row { grid-template-columns: 1fr 1fr; }
   .row.head { display: none; }
 }
