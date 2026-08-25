@@ -14,7 +14,7 @@ const receptionRestaurants = [
   {
     name: "the Jade 翠玉轩",
     location: "丽豪航天城酒店内，近 AsiaWorld-Expo",
-    image: "https://static.okibook.com/userfiles/image/2023/03/21/641925ab587df.jpg",
+    image: `${import.meta.env.BASE_URL}restaurants/the-jade.svg`,
     price: "参考：商务中餐，人均约 HKD 300-600 起，按点菜/套餐浮动",
     address: "8 Airport Expo Boulevard, Hong Kong International Airport, Chek Lap Kok",
     booking: "建议提前向酒店餐饮部确认包厢和最低消费",
@@ -25,7 +25,7 @@ const receptionRestaurants = [
   {
     name: "NUVA",
     location: "AsiaWorld-Expo 展馆内",
-    image: "https://cdn.tatlerasia.com/tatlerasia/i/2024/01/15124506-nuva_cover_1600x1200.jpg",
+    image: `${import.meta.env.BASE_URL}restaurants/nuva.svg`,
     price: "参考：中高端中餐/点心/商务餐，人均约 HKD 300-800，按菜单浮动",
     address: "AsiaWorld-Expo, Hong Kong International Airport, Lantau",
     booking: "展会期间很容易满位，建议提前预约并确认包厢/半私密区域",
@@ -36,7 +36,7 @@ const receptionRestaurants = [
   {
     name: "Man Ho Chinese Restaurant 万豪金殿",
     location: "香港天际万豪酒店内，近 AsiaWorld-Expo",
-    image: "https://cache.marriott.com/content/dam/marriott-renditions/HKGAP/hkgap-restaurant-0041-hor-clsc.jpg",
+    image: `${import.meta.env.BASE_URL}restaurants/man-ho.svg`,
     price: "参考：酒店粤菜商务接待，人均约 HKD 500-900+",
     address: "Hong Kong SkyCity Marriott Hotel, 1 Sky City Road East, Hong Kong International Airport",
     booking: "建议提前订位，说明 business dinner / private room request",
@@ -47,7 +47,7 @@ const receptionRestaurants = [
   {
     name: "Rouge 富豪中菜厅",
     location: "香港富豪机场酒店内，机场区域",
-    image: "",
+    image: `${import.meta.env.BASE_URL}restaurants/rouge.svg`,
     price: "参考：传统粤菜接待，人均约 HKD 300-700，按点菜浮动",
     address: "Regal Airport Hotel, 9 Cheong Tat Road, Hong Kong International Airport",
     booking: "适合提前电话确认包厢、圆桌和最低消费",

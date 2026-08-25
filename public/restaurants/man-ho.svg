@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" role="img" aria-label="Luxury hotel Chinese restaurant">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#27170f"/>
+      <stop offset="0.45" stop-color="#7c4a22"/>
+      <stop offset="1" stop-color="#f1d08b"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="18%" r="45%">
+      <stop offset="0" stop-color="#fff2bd"/>
+      <stop offset="1" stop-color="#fff2bd" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="720" fill="url(#bg)"/>
+  <rect width="1200" height="720" fill="url(#glow)" opacity="0.9"/>
+  <g fill="#2b1d18" opacity="0.62">
+    <rect x="80" y="210" width="250" height="360" rx="120"/>
+    <rect x="870" y="210" width="250" height="360" rx="120"/>
+  </g>
+  <ellipse cx="600" cy="482" rx="330" ry="92" fill="#fff1c7" opacity="0.93"/>
+  <ellipse cx="600" cy="482" rx="245" ry="62" fill="#8a4d22" opacity="0.96"/>
+  <g fill="#fff7dc" opacity="0.86">
+    <circle cx="370" cy="405" r="34"/>
+    <circle cx="830" cy="405" r="34"/>
+    <circle cx="485" cy="585" r="34"/>
+    <circle cx="715" cy="585" r="34"/>
+  </g>
+  <g stroke="#f7d890" stroke-width="6" opacity="0.75">
+    <path d="M420 170 C500 105 700 105 780 170"/>
+    <path d="M445 205 C520 160 680 160 755 205"/>
+  </g>
+  <text x="70" y="105" fill="#fff7df" font-family="Georgia, serif" font-size="58" font-weight="700">Man Ho</text>
+  <text x="74" y="158" fill="#ffe4a3" font-family="Arial, sans-serif" font-size="28">Hotel Chinese dining · key client dinner</text>
+</svg>

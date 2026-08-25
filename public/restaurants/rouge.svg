@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" role="img" aria-label="Classic Cantonese round table dining">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#1d2430"/>
+      <stop offset="0.5" stop-color="#8a1f25"/>
+      <stop offset="1" stop-color="#efba67"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="720" fill="url(#bg)"/>
+  <g opacity="0.2" fill="#fff2c0">
+    <circle cx="160" cy="150" r="86"/>
+    <circle cx="1040" cy="170" r="110"/>
+    <circle cx="990" cy="560" r="160"/>
+  </g>
+  <rect x="220" y="170" width="760" height="360" rx="44" fill="#fff5d8" opacity="0.14"/>
+  <circle cx="600" cy="440" r="170" fill="#f4c46d"/>
+  <circle cx="600" cy="440" r="128" fill="#98282c"/>
+  <circle cx="600" cy="440" r="72" fill="#ffe4a3"/>
+  <g fill="#fff5d8">
+    <circle cx="445" cy="330" r="28"/>
+    <circle cx="755" cy="330" r="28"/>
+    <circle cx="420" cy="525" r="28"/>
+    <circle cx="780" cy="525" r="28"/>
+  </g>
+  <g stroke="#ffd37a" stroke-width="9" opacity="0.8">
+    <path d="M315 210 H885"/>
+    <path d="M315 260 H885"/>
+  </g>
+  <text x="70" y="105" fill="#fff7df" font-family="Georgia, serif" font-size="58" font-weight="700">Rouge</text>
+  <text x="74" y="158" fill="#ffe4a3" font-family="Arial, sans-serif" font-size="28">Classic Cantonese table · formal reception</text>
+</svg>
