@@ -3,14 +3,13 @@ import { defaultDrafts } from "./data";
 import { getShareConfig, loadRemoteState, saveRemoteState, saveShareConfig } from "./sharedStore";
 
 const storageKey = "hk-expo-execution-system-v1";
-const tabs = ["总控台", "展会信息", "攻略", "样品管理", "客户速记卡", "会展英语", "AI辅助"];
+const tabs = ["展会信息", "酒店信息", "接待推荐", "记得携带", "样品管理", "客户速记卡", "会展英语"];
 const quickValueTags = ["重点客户", "有兴趣", "普通客户"];
 const quickActions = [
   { label: "添加 WhatsApp", tip: "客户愿意保持联系" },
   { label: "发送产品资料", tip: "客户想了解产品、规格、包装、供应情况" },
   { label: "发送报价", tip: "客户有明确采购或询价需求" }
 ];
-const guideTabs = ["行程信息", "酒店信息", "餐饮信息", "接待推荐"];
 const receptionRestaurants = [
   {
     name: "the Jade 翠玉轩",
@@ -184,7 +183,7 @@ export default function App() {
   const [showShareSetup, setShowShareSetup] = useState(false);
   const [shareDraft, setShareDraft] = useState(() => getShareConfig());
   const [syncStatus, setSyncStatus] = useState("本地模式");
-  const [activeTab, setActiveTab] = useState("总控台");
+  const [activeTab, setActiveTab] = useState("展会信息");
   const [travelSubTab, setTravelSubTab] = useState("行程信息");
   const [diningSubTab, setDiningSubTab] = useState("员工用餐");
   const [selectedTravelId, setSelectedTravelId] = useState(() => loadState().travel?.[0]?.id ?? 1);
@@ -343,6 +342,13 @@ export default function App() {
     setState((prev) => ({ ...prev, checklist: prev.checklist.filter((i) => i.id !== id) }));
   };
 
+  const addCarryItem = () => {
+    const name = window.prompt("请输入要携带的物品名称");
+    if (!name?.trim()) return;
+    const nextId = Math.max(0, ...checklist.map((i) => i.id || 0)) + 1;
+    setState((prev) => ({ ...prev, checklist: [...prev.checklist, { id: nextId, name: name.trim(), note: "" }] }));
+  };
+
   const addStaffRest = () => {
     const nextId = Math.max(0, ...state.restaurants.staff.map((i) => i.id)) + 1;
     setState((prev) => ({ ...prev, restaurants: { ...prev.restaurants, staff: [{ id: nextId, restaurant: "新餐厅", location: "", transport: "", note: "" }, ...prev.restaurants.staff] } }));
@@ -418,7 +424,6 @@ export default function App() {
         <div className="subtitle">展会日期：2026/09/02-09/04<br />展馆：AsiaWorld-Expo<br />展位：5馆 5B32</div>
         <div className="nav">{tabs.map((tab) => <button key={tab} className={activeTab === tab ? "nav-item active" : "nav-item"} onClick={() => setActiveTab(tab)}>{tab}</button>)}</div>
         <div className="card-actions">
-          <button className="primary" onClick={generateAI}>一键生成客户AI建议</button>
           <button className="secondary" onClick={() => setShowQuickCard(true)}>新增客户</button>
           <button className="secondary" onClick={() => setShowShareSetup(true)}>共享设置</button>
         </div>
@@ -432,7 +437,6 @@ export default function App() {
             <p className="hero-text">这是展会现场的轻量执行台，先把最常用的信息放在一屏内，后面再继续完善共享保存和发布版。</p>
           </div>
           <div className="card-actions">
-            <button className="primary" onClick={generateAI}>一键生成客户AI建议</button>
             <button className="secondary" onClick={() => setShowQuickCard(true)}>新增客户</button>
             <button className="secondary" onClick={() => setShowShareSetup(true)}>共享设置</button>
           </div>
@@ -442,114 +446,91 @@ export default function App() {
           <span>{syncStatus}</span>
         </div>
 
-        {activeTab === "总控台" && (
-          <Card title="总览">
-            <div className="stats-grid grid stats">
-              <div className="stat"><strong>{clients.length}</strong><span>客户</span></div>
-              <div className="stat"><strong>{samples.length}</strong><span>样品</span></div>
-              <div className="stat"><strong>{travel.length}</strong><span>行程</span></div>
-              <div className="stat"><strong>{new Set(clients.map((c) => c.market).filter(Boolean)).size}</strong><span>市场</span></div>
-            </div>
-          </Card>
-        )}
-
         {activeTab === "展会信息" && (
-          <Card title="展会基础信息">
-            <div className="info-grid">
-              <div><span>名称</span><input value={state.exhibition.name} onChange={(e) => updateField("exhibition", "name", e.target.value)} /></div>
-              <div><span>日期</span><input value={state.exhibition.dateRange} onChange={(e) => updateField("exhibition", "dateRange", e.target.value)} /></div>
-              <div><span>展馆</span><input value={state.exhibition.venue} onChange={(e) => updateField("exhibition", "venue", e.target.value)} /></div>
-              <div><span>展位</span><input value={state.exhibition.booth} onChange={(e) => updateField("exhibition", "booth", e.target.value)} /></div>
+          <Card title="展会信息">
+            <div className="expo-board">
+              <div className="expo-main">
+                <p className="eyebrow">Asia Fruit Logistica 2026</p>
+                <h2>{state.exhibition.name}</h2>
+                <p>{state.exhibition.note}</p>
+              </div>
+              <div className="expo-info-grid">
+                <div><span>展会日期</span><strong>2026/09/02 - 2026/09/04</strong></div>
+                <div><span>展馆</span><strong>香港亚洲国际博览馆 AsiaWorld-Expo</strong></div>
+                <div><span>展位</span><strong>5馆 5B32</strong></div>
+                <div><span>出发动车</span><strong>福州南 → 深圳北 · G1609 · 09/01 08:33-13:06</strong></div>
+              </div>
             </div>
           </Card>
         )}
 
-        {activeTab === "攻略" && (
-          <Card title="攻略" action={<div className="card-actions">{guideTabs.map((tab) => <button key={tab} className={travelSubTab === tab ? "chip active" : "chip"} onClick={() => setTravelSubTab(tab)}>{tab}</button>)}</div>}>
-            {travelSubTab === "行程信息" && (
-              <div className="guide-panel">
-                <div className="guide-hero">
-                  <div>
-                    <p className="eyebrow">9月1日出发</p>
-                    <h3>福州南 → 深圳北</h3>
-                    <p>高铁 G1609 · 08:33 - 13:06 · 约 4小时33分</p>
-                  </div>
-                  <div className="guide-ticket">05车 01ABCD 座位</div>
+        {activeTab === "酒店信息" && (
+          <Card title="酒店信息">
+            <div className="guide-panel">
+              <div className="guide-hero hotel">
+                <div>
+                  <p className="eyebrow">住宿与基础餐饮</p>
+                  <h3>丽豪航天城酒店</h3>
+                  <p>Regala Skycity Hotel · 入住 2026/09/01 - 退房 2026/09/04</p>
                 </div>
-                <div className="guide-grid">
-                  <div className="guide-card"><span>日期</span><strong>2026/09/01</strong></div>
-                  <div className="guide-card"><span>车次</span><strong>G1609</strong></div>
-                  <div className="guide-card"><span>出发站</span><strong>福州南</strong></div>
-                  <div className="guide-card"><span>到达站</span><strong>深圳北</strong></div>
-                  <div className="guide-card"><span>出发时间</span><strong>08:33</strong></div>
-                  <div className="guide-card"><span>到达时间</span><strong>13:06</strong></div>
-                </div>
-                <div className="section-block">
-                  <div className="section-title">提醒</div>
-                  <p className="muted">建议提前到站，证件、港澳通行证、充电宝、转换插头、名片、产品资料随身检查。深圳北后续按包车安排衔接。</p>
-                </div>
+                <div className="guide-ticket">含早</div>
               </div>
-            )}
-
-            {travelSubTab === "酒店信息" && (
-              <div className="guide-panel">
-                <div className="guide-hero hotel">
-                  <div>
-                    <p className="eyebrow">住宿安排</p>
-                    <h3>丽豪航天城酒店</h3>
-                    <p>Regala Skycity Hotel · 近 AsiaWorld-Expo</p>
-                  </div>
-                  <div className="guide-ticket">含早</div>
-                </div>
-                <div className="guide-grid">
-                  <div className="guide-card"><span>入住</span><strong>2026/09/01 15:00</strong></div>
-                  <div className="guide-card"><span>退房</span><strong>2026/09/04 12:00</strong></div>
-                  <div className="guide-card wide"><span>提前到达说明</span><strong>如果提早到，只要有空房也可以安排入住。</strong></div>
-                  <div className="guide-card wide"><span>交通</span><strong>酒店位于航天城/机场区域，去展馆和机场都比较方便。</strong></div>
-                </div>
+              <div className="guide-grid">
+                <div className="guide-card"><span>入住</span><strong>2026/09/01 15:00</strong></div>
+                <div className="guide-card"><span>退房</span><strong>2026/09/04 12:00</strong></div>
+                <div className="guide-card wide"><span>提前到达说明</span><strong>如果提早到，只要有空房也可以安排入住。</strong></div>
+                <div className="guide-card wide"><span>早餐</span><strong>酒店含早</strong></div>
+                <div className="guide-card"><span>午餐</span><strong>订餐 / 下载 Keeta 点外卖</strong></div>
+                <div className="guide-card"><span>晚餐</span><strong>暂无固定安排</strong></div>
+                <div className="guide-card wide"><span>提醒</span><strong>展会现场节奏紧，建议随身备水和简单零食。</strong></div>
               </div>
-            )}
+            </div>
+          </Card>
+        )}
 
-            {travelSubTab === "餐饮信息" && (
-              <div className="guide-panel">
-                <div className="guide-grid">
-                  <div className="guide-card"><span>早餐</span><strong>酒店含早</strong><p className="muted">出发前尽量吃早餐，展会现场节奏会很紧。</p></div>
-                  <div className="guide-card"><span>午餐</span><strong>订餐 / Keeta 外卖</strong><p className="muted">建议提前下载 Keeta，展会当天可点外卖或统一订餐。</p></div>
-                  <div className="guide-card"><span>晚餐</span><strong>暂无固定安排</strong><p className="muted">如果有重点客户，再临时按接待推荐预约。</p></div>
-                  <div className="guide-card"><span>现场建议</span><strong>备一点零食和水</strong><p className="muted">展位忙时可能没法准点吃饭。</p></div>
-                </div>
+        {activeTab === "接待推荐" && (
+          <Card title="接待推荐">
+            <div className="guide-panel">
+              <div className="section-block">
+                <div className="section-title">选择逻辑</div>
+                <p className="muted">客户不方便外出：优先 NUVA；客户住酒店或想省时间：优先 the Jade；重点客户正式晚餐：优先 Man Ho；传统粤菜圆桌：备选 Rouge。价格为接待预算参考，实际以餐厅当日菜单和预约确认为准。</p>
               </div>
-            )}
-
-            {travelSubTab === "接待推荐" && (
-              <div className="guide-panel">
-                <div className="section-block">
-                  <div className="section-title">选择逻辑</div>
-                  <p className="muted">客户不方便外出：优先 NUVA；客户住酒店或想省时间：优先 the Jade；重点客户正式晚餐：优先 Man Ho；传统粤菜圆桌：备选 Rouge。价格为接待预算参考，实际以餐厅当日菜单和预约确认为准。</p>
-                </div>
-                <div className="restaurant-grid">
-                  {receptionRestaurants.map((restaurant) => (
-                    <article className="restaurant-card" key={restaurant.name}>
-                      {restaurant.image ? <img src={restaurant.image} alt={restaurant.name} /> : <div className="restaurant-placeholder">暂无官方照片</div>}
-                      <div className="restaurant-body">
-                        <div className="restaurant-head">
-                          <h3>{restaurant.name}</h3>
-                          <span>{restaurant.location}</span>
-                        </div>
-                        <p className="restaurant-fit">{restaurant.fit}</p>
-                        <div className="restaurant-meta"><strong>价格</strong><span>{restaurant.price}</span></div>
-                        <div className="restaurant-meta"><strong>地址</strong><span>{restaurant.address}</span></div>
-                        <div className="restaurant-meta"><strong>预约</strong><span>{restaurant.booking}</span></div>
-                        <ul className="restaurant-list">
-                          {restaurant.advantages.map((item) => <li key={item}>{item}</li>)}
-                        </ul>
-                        <a className="source-link" href={restaurant.source} target="_blank" rel="noreferrer">查看来源/预约参考</a>
+              <div className="restaurant-grid">
+                {receptionRestaurants.map((restaurant) => (
+                  <article className="restaurant-card" key={restaurant.name}>
+                    {restaurant.image ? <img src={restaurant.image} alt={restaurant.name} /> : <div className="restaurant-placeholder">暂无官方照片</div>}
+                    <div className="restaurant-body">
+                      <div className="restaurant-head">
+                        <h3>{restaurant.name}</h3>
+                        <span>{restaurant.location}</span>
                       </div>
-                    </article>
-                  ))}
-                </div>
+                      <p className="restaurant-fit">{restaurant.fit}</p>
+                      <div className="restaurant-meta"><strong>价格</strong><span>{restaurant.price}</span></div>
+                      <div className="restaurant-meta"><strong>地址</strong><span>{restaurant.address}</span></div>
+                      <div className="restaurant-meta"><strong>预约</strong><span>{restaurant.booking}</span></div>
+                      <ul className="restaurant-list">
+                        {restaurant.advantages.map((item) => <li key={item}>{item}</li>)}
+                      </ul>
+                      <a className="source-link" href={restaurant.source} target="_blank" rel="noreferrer">查看来源/预约参考</a>
+                    </div>
+                  </article>
+                ))}
               </div>
-            )}
+            </div>
+          </Card>
+        )}
+
+        {activeTab === "记得携带" && (
+          <Card title="记得携带" action={<button className="primary small" onClick={addCarryItem}>新增物品</button>}>
+            <div className="carry-board">
+              {checklist.map((item) => (
+                <button className="carry-chip" key={item.id} type="button" onDoubleClick={() => deleteChecklist(item.id)} title="双击删除">
+                  <span>{item.name}</span>
+                  <small>{item.note || "双击删除"}</small>
+                </button>
+              ))}
+            </div>
+            <p className="muted carry-note">提示：点击只是查看，双击物品按钮可删除。新增和删除会同步保存。</p>
           </Card>
         )}
 
@@ -562,7 +543,7 @@ export default function App() {
         )}
 
         {activeTab === "客户速记卡" && (
-          <Card title="客户列表" action={<div className="card-actions"><button className="primary small" onClick={() => setShowQuickCard(true)}>新增客户</button><button className="secondary small" onClick={generateAI}>AI整理今日记录</button></div>}>
+          <Card title="客户列表" action={<div className="card-actions"><button className="primary small" onClick={() => setShowQuickCard(true)}>新增客户</button></div>}>
             <div className="table"><div className="row head"><span>公司</span><span>国家</span><span>客户类型</span><span>价值</span><span>市场</span><span>下一步动作</span></div>{clients.map((item) => <div key={item.id} className="row"><span>{item.name}</span><span>{item.country}</span><span>{item.type}</span><span>{item.value}</span><span>{item.market}</span><span>{(item.nextActions || []).join(" / ")}</span></div>)}</div>
             {showQuickCard && <div className="modal-backdrop" onClick={() => setShowQuickCard(false)}><div className="modal" onClick={(e) => e.stopPropagation()}><div className="modal-head"><h2>客户速记卡</h2><button className="icon-button" onClick={() => setShowQuickCard(false)}>×</button></div><div className="modal-grid"><label>公司<input value={draft.companyName} onChange={(e) => setDraft((p) => ({ ...p, companyName: e.target.value }))} /></label><label>国家<input value={draft.country} onChange={(e) => setDraft((p) => ({ ...p, country: e.target.value }))} /></label><label>市场<input value={draft.market} onChange={(e) => setDraft((p) => ({ ...p, market: e.target.value }))} /></label><label>客户类型<select value={draft.clientType} onChange={(e) => setDraft((p) => ({ ...p, clientType: e.target.value }))}><option value="新客户">新客户</option><option value="老客户">老客户</option></select></label><label>联系人<input value={draft.contactName} onChange={(e) => setDraft((p) => ({ ...p, contactName: e.target.value }))} /></label><label>WhatsApp<input value={draft.whatsapp} onChange={(e) => setDraft((p) => ({ ...p, whatsapp: e.target.value }))} /></label><label>Email<input value={draft.email} onChange={(e) => setDraft((p) => ({ ...p, email: e.target.value }))} /></label><label>产品兴趣<textarea value={draft.productsText} onChange={(e) => setDraft((p) => ({ ...p, productsText: e.target.value }))} /></label></div><div className="section-block"><div className="section-title">客户价值</div><div className="button-row">{quickValueTags.map((tag) => <button key={tag} className={draft.value === tag ? "chip active" : "chip"} onClick={() => setDraft((p) => ({ ...p, value: tag }))}>{tag}</button>)}</div></div><div className="section-block"><div className="section-title">下一步动作</div><div className="button-row wrap">{quickActions.map((item) => <button key={item.label} className={draft.nextActions.includes(item.label) ? "chip active" : "chip"} title={item.tip} onClick={() => toggleAction(item.label)}>{item.label}</button>)}</div><div className="action-hint">{actionHint || "第一次点击看提示，第二次确认选择，第三次取消选择。"}</div></div><div className="section-block"><label>Quick Notes<textarea value={draft.quickNotes} onChange={(e) => setDraft((p) => ({ ...p, quickNotes: e.target.value }))} /></label></div><div className="modal-actions"><button className="secondary" onClick={() => setShowQuickCard(false)}>取消</button><button className="primary" onClick={saveQuickCard}>保存</button></div></div></div>}
           </Card>
@@ -615,8 +596,6 @@ export default function App() {
             </div>
           </Card>
         )}
-
-        {activeTab === "AI辅助" && <Card title="AI辅助输出"><pre className="output">{aiOutput || "点击生成后，这里会显示接待方案、英文话术、WhatsApp 问候语和跟进计划。"}</pre></Card>}
 
         {showShareSetup && (
           <div className="modal-backdrop" onClick={() => setShowShareSetup(false)}>
