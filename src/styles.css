@@ -195,6 +195,81 @@ h1 { margin: 0; font-size: 34px; }
   font-size: 22px;
   line-height: 1.45;
 }
+.expo-info-grid a {
+  color: #163b73;
+  text-decoration: none;
+}
+.meeting-board {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.meeting-card {
+  padding: 18px;
+  border-radius: 20px;
+  background: #fff;
+  border: 1px solid rgba(20,40,70,0.08);
+  box-shadow: 0 10px 26px rgba(20,40,70,0.06);
+}
+.meeting-card.pending {
+  border-color: rgba(183,87,35,0.22);
+  background: #fffaf4;
+}
+.meeting-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: flex-start;
+  margin-bottom: 14px;
+}
+.meeting-top h3 {
+  margin: 8px 0 0;
+  font-size: 20px;
+  line-height: 1.35;
+}
+.meeting-status {
+  display: inline-flex;
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: #eaf8ef;
+  color: #1f6b3d;
+  font-size: 12px;
+  font-weight: 800;
+}
+.meeting-card.pending .meeting-status {
+  background: #fff0df;
+  color: #9b4b11;
+}
+.meeting-time {
+  flex: 0 0 auto;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: #132238;
+  color: #fff;
+  font-weight: 800;
+}
+.meeting-meta {
+  display: grid;
+  gap: 5px;
+  padding: 12px;
+  border-radius: 14px;
+  background: #f7fbff;
+}
+.meeting-meta span {
+  color: #678;
+  font-size: 13px;
+}
+.meeting-focus {
+  margin: 12px 0;
+  color: #31455d;
+  line-height: 1.58;
+}
+.meeting-notes {
+  margin: 0;
+  padding-left: 18px;
+  color: #31455d;
+  line-height: 1.65;
+}
 .carry-board {
   display: flex;
   gap: 12px;
@@ -692,10 +767,12 @@ h1 { margin: 0; font-size: 34px; }
 @media (max-width: 1100px) {
   .app-shell { grid-template-columns: 1fr; }
   .sidebar { position: static; }
-  .stats, .plan-grid, .ai-box, .info-grid, .preview-grid, .modal-grid, .english-hero, .english-grid, .terms-grid, .guide-hero, .guide-grid, .restaurant-grid, .expo-info-grid { grid-template-columns: 1fr; }
+  .stats, .plan-grid, .ai-box, .info-grid, .preview-grid, .modal-grid, .english-hero, .english-grid, .terms-grid, .guide-hero, .guide-grid, .restaurant-grid, .expo-info-grid, .meeting-board { grid-template-columns: 1fr; }
   .guide-card.wide { grid-column: auto; }
   .restaurant-head { display: grid; }
   .restaurant-head span { max-width: none; text-align: left; }
+  .meeting-top { display: grid; }
+  .meeting-time { width: fit-content; }
   .dialogue-title, .dialogue-turn { grid-template-columns: 1fr; display: grid; }
   .dialogue-role { padding-top: 0; }
   .row { grid-template-columns: 1fr 1fr; }

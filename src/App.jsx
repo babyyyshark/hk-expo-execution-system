@@ -3,7 +3,7 @@ import { defaultDrafts } from "./data";
 import { getShareConfig, loadRemoteState, saveRemoteState, saveShareConfig } from "./sharedStore";
 
 const storageKey = "hk-expo-execution-system-v1";
-const tabs = ["展会信息", "酒店信息", "接待推荐", "记得携带", "样品管理", "客户速记卡", "会展英语"];
+const tabs = ["展会信息", "酒店信息", "接待推荐", "接待安排", "记得携带", "样品管理", "客户速记卡", "会展英语"];
 const quickValueTags = ["重点客户", "有兴趣", "普通客户"];
 const quickActions = [
   { label: "添加 WhatsApp", tip: "客户愿意保持联系" },
@@ -56,6 +56,40 @@ const receptionRestaurants = [
     source: "https://www.regalhotel.com/en/regal-airport-hotel/restaurants-and-bars/rouge"
   }
 ];
+const meetingSchedules = [
+  {
+    buyer: "Kc trading (Australia) pty ltd",
+    country: "Australia",
+    time: "2 September (Day 1) 09:00",
+    status: "已预约",
+    focus: "Export to Australia.",
+    notes: ["确认主要采购品类", "了解澳洲市场需求", "带公司介绍和水果品类资料"]
+  },
+  {
+    buyer: "A. Chinatamby Co. Ltd / Votre Pote Age Ltee",
+    country: "Mauritius",
+    time: "2 September (Day 1) 11:00",
+    status: "已预约",
+    focus: "Mauritius importer, distributor, retailer and wholesaler of fresh fruits and vegetables. Key supplier to hotels and restaurants, also manages fresh fruit and vegetable sections of Carrefour in Mauritius.",
+    notes: ["重点介绍中国鲜果出口经验", "可讨论梨、柚子、柑橘及季节水果", "客户寻找长期合作的种植商、出口商和供应商", "关注酒店餐饮和零售渠道稳定供货"]
+  },
+  {
+    buyer: "LEVAN PTE LTD",
+    country: "Cambodia",
+    time: "2 September (Day 1) 13:00",
+    status: "已预约",
+    focus: "Cambodia based importer looking for mandarin orange.",
+    notes: ["重点准备 mandarin orange 资料", "确认规格、包装、季节、价格区间", "可引导客户留下 WhatsApp 便于后续报价"]
+  },
+  {
+    buyer: "DMA FOODS / Firas",
+    country: "Turkey / Kazakhstan route",
+    time: "2 September (Day 1) 14:00 待确认",
+    status: "待确认",
+    focus: "Blueberry bulk 3kg/carton. Customer asks FOB Khorgas / Kazakhstan shipment, with Turkey as final destination documents.",
+    notes: ["客户关心 high quality、shelf life、FOB Kazakhstan shipment details", "客户表示 they will take care of shipment from Khorgas, Kazakhstan", "文件要求：all documents are Turkey", "香港面谈重点：付款条款、风险责任、单证要求、FOB霍尔果斯可行性", "已改约：We already have a meeting scheduled at 13:00 on Sept. 2. Would 14:00 work for you instead? 等待回复"]
+  }
+];
 const englishSections = [
   {
     title: "快速开场",
@@ -63,7 +97,7 @@ const englishSections = [
     lines: [
       ["自然迎接", "Hello, welcome to our booth. Please feel free to have a look.", "您好，欢迎来到我们的展位，您可以先随便看看。"],
       ["轻松破冰", "Is this your first time visiting Asia Fruit Logistica?", "这是您第一次来亚洲果蔬展吗？"],
-      ["快速判断需求", "Are you mainly looking for fresh fruits, vegetables, frozen products, or seafood?", "您主要在找水果、蔬菜、冻品还是海鲜？"],
+      ["快速判断需求", "Are you mainly looking for fresh fruits, vegetables, or seasonal produce?", "您主要在找水果、蔬菜，还是季节性农产品？"],
       ["留下沟通空间", "If anything is interesting, I can give you a quick introduction.", "如果您对某个产品感兴趣，我可以简单给您介绍一下。"]
     ]
   },
@@ -72,9 +106,9 @@ const englishSections = [
     badge: "Company Intro",
     lines: [
       ["自我介绍", "My name is Krystal. I am responsible for overseas business and customer follow-up.", "我是 Krystal，主要负责海外业务和客户跟进。"],
-      ["公司名称", "We are Fuzhou Xiangshan Fruit Co., Ltd., a fruit and food trading company based in Fuzhou, China.", "我们是福州向善果业有限公司，是一家位于福州的水果食品贸易公司。"],
-      ["公司定位", "We work as a sourcing and export partner, helping customers match reliable factories and suitable products.", "我们作为采购和出口合作伙伴，帮客户匹配可靠工厂和合适产品。"],
-      ["合作资源", "Our supply network covers fruit production areas across China, and we also cooperate with suppliers from Vietnam and Taiwan.", "我们的供应网络覆盖中国多个水果产区，也和越南、台湾供应商有合作。"]
+      ["公司名称", "We are Fuzhou Xiangshan Fruit Co., Ltd., specializing in exporting fresh fruits from China.", "我们是福州向善果业有限公司，专注于中国鲜果出口。"],
+      ["公司定位", "We work with global importers, distributors and retailers.", "我们服务全球进口商、分销商和零售商。"],
+      ["官网介绍", "You can also visit our website: fruitioncn.com.", "您也可以查看我们的官网：fruitioncn.com。"]
     ]
   },
   {
@@ -93,8 +127,8 @@ const englishSections = [
     lines: [
       ["做过多久", "We have been working in fruit sourcing and export for many years, with stable factory and farm resources.", "我们多年从事水果采购和出口，有稳定的工厂和基地资源。"],
       ["做过国家", "We have experience serving customers from the Middle East, Southeast Asia, Korea, Taiwan, and other markets.", "我们有服务中东、东南亚、韩国、台湾等市场客户的经验。"],
-      ["水果品类", "For fruits, we can discuss blueberries, cherries, citrus, grapes, apples, pears, and seasonal fruits.", "水果方面可以沟通蓝莓、车厘子、柑橘、葡萄、苹果、梨和季节性水果。"],
-      ["蔬菜冻品", "We can also help with vegetables, frozen products, seafood, and other food items depending on your demand.", "也可以根据需求协助蔬菜、冻品、海鲜和其他食品品类。"]
+      ["水果品类", "We specialize in Chinese pears, pomelo, mandarins and other seasonal fruits.", "我们重点做中国梨、柚子、柑橘及其他季节性水果。"],
+      ["蔬菜需求", "We can also discuss fresh vegetables if they fit your purchasing plan.", "如果符合您的采购计划，也可以沟通新鲜蔬菜。"]
     ]
   },
   {
@@ -154,7 +188,6 @@ const tradeTerms = [
   ["柜量", "container quantity"],
   ["目的港", "destination port"],
   ["冷链", "cold chain"],
-  ["冷冻", "frozen"],
   ["保鲜", "fresh keeping"],
   ["采购量", "purchase volume"],
   ["目标价", "target price"],
@@ -174,7 +207,7 @@ const englishDialogues = [
     turns: [
       ["Sales", "Hello, welcome to our booth. Please feel free to have a look.", "您好，欢迎来到我们的展位，您可以先随便看看。"],
       ["Visitor", "Thank you. What kind of products do you mainly supply?", "谢谢。你们主要供应什么产品？"],
-      ["Sales", "We are a fruit and food trading company based in Fuzhou, China. We mainly help overseas customers source fruits, vegetables, frozen products, and seafood.", "我们是位于福州的水果食品贸易公司，主要帮海外客户采购水果、蔬菜、冻品和海鲜。"],
+      ["Sales", "Fuzhou Xiangshan Fruit Co., Ltd. specializes in exporting fresh fruits from China, including Chinese pears, pomelo, mandarins and other seasonal fruits.", "福州向善果业有限公司专注于中国鲜果出口，包括中国梨、柚子、柑橘和其他季节性水果。"],
       ["Visitor", "Do you only supply from one factory?", "你们只从一家工厂供货吗？"],
       ["Sales", "No. Our advantage is integration. We work with different production areas and factories, so we can match suitable products according to your market.", "不是。我们的优势是整合。我们和不同产区、不同工厂合作，可以根据您的市场匹配合适产品。"],
       ["Sales", "May I know which market you are buying for?", "方便问一下您主要做哪个市场吗？"]
@@ -186,7 +219,7 @@ const englishDialogues = [
     turns: [
       ["Visitor", "We are not looking for only one item. Can you combine different products?", "我们不是只找一个产品。你们可以组合不同产品吗？"],
       ["Sales", "Yes, this is one of our biggest advantages. We can arrange mixed container loading for different items.", "可以，这是我们最大的优势之一。我们可以为不同产品安排拼柜。"],
-      ["Sales", "For example, if you need fruits, vegetables, and frozen products together, we can help you coordinate suppliers, packing, documents, and shipment.", "比如您需要水果、蔬菜和冻品一起出货，我们可以帮您协调供应商、包装、单证和运输。"],
+      ["Sales", "For example, if you need different fruits and vegetables together, we can help you coordinate suppliers, packing, documents, and shipment.", "比如您需要不同水果和蔬菜一起出货，我们可以帮您协调供应商、包装、单证和运输。"],
       ["Visitor", "That sounds useful. Can you customize the combination?", "这听起来不错。可以定制组合吗？"],
       ["Sales", "Yes. We can customize it according to your market, season, budget, target price, and packing requirement.", "可以。我们可以根据您的市场、季节、预算、目标价格和包装要求定制。"],
       ["Sales", "If you share your product list, I can check what can be combined in one shipment.", "如果您给我产品清单，我可以帮您确认哪些产品适合拼在同一票货里。"]
@@ -508,6 +541,8 @@ export default function App() {
                 <div><span>展馆</span><strong>香港亚洲国际博览馆 AsiaWorld-Expo</strong></div>
                 <div><span>展位</span><strong>5馆 5B32</strong></div>
                 <div><span>出发动车</span><strong>福州南 → 深圳北 · G1609 · 09/01 08:33-13:06</strong></div>
+                <div><span>公司官网</span><strong><a href="https://fruitioncn.com/" target="_blank" rel="noreferrer">fruitioncn.com</a></strong></div>
+                <div><span>重点产品</span><strong>中国鲜果：梨、柚子、柑橘及其他季节性水果；可沟通新鲜蔬菜。</strong></div>
               </div>
             </div>
           </Card>
@@ -565,6 +600,32 @@ export default function App() {
                   </article>
                 ))}
               </div>
+            </div>
+          </Card>
+        )}
+
+        {activeTab === "接待安排" && (
+          <Card title="接待安排">
+            <div className="meeting-board">
+              {meetingSchedules.map((meeting) => (
+                <article className={meeting.status === "待确认" ? "meeting-card pending" : "meeting-card"} key={meeting.buyer}>
+                  <div className="meeting-top">
+                    <div>
+                      <span className="meeting-status">{meeting.status}</span>
+                      <h3>{meeting.buyer}</h3>
+                    </div>
+                    <div className="meeting-time">{meeting.time}</div>
+                  </div>
+                  <div className="meeting-meta">
+                    <span>国家 / 路线</span>
+                    <strong>{meeting.country}</strong>
+                  </div>
+                  <div className="meeting-focus">{meeting.focus}</div>
+                  <ul className="meeting-notes">
+                    {meeting.notes.map((note) => <li key={note}>{note}</li>)}
+                  </ul>
+                </article>
+              ))}
             </div>
           </Card>
         )}
