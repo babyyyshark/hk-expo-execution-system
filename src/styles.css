@@ -259,16 +259,43 @@ h1 { margin: 0; font-size: 34px; }
   color: #678;
   font-size: 13px;
 }
+.meeting-meta small,
+.meeting-en {
+  color: #6b7d90;
+  line-height: 1.5;
+}
 .meeting-focus {
   margin: 12px 0;
   color: #31455d;
   line-height: 1.58;
+}
+.meeting-focus strong {
+  color: #163b73;
+}
+.meeting-focus p {
+  margin: 7px 0 0;
 }
 .meeting-notes {
   margin: 0;
   padding-left: 18px;
   color: #31455d;
   line-height: 1.65;
+}
+.meeting-notes.english {
+  margin-top: 8px;
+  color: #6b7d90;
+}
+.meeting-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px dashed rgba(20,40,70,0.12);
+}
+.secondary.small {
+  padding: 8px 11px;
+  margin-left: 0;
 }
 .carry-board {
   display: flex;

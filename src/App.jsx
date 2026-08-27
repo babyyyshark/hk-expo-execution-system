@@ -58,35 +58,55 @@ const receptionRestaurants = [
 ];
 const meetingSchedules = [
   {
+    id: 1,
     buyer: "Kc trading (Australia) pty ltd",
+    buyerEn: "Kc trading (Australia) pty ltd",
     country: "Australia",
+    countryEn: "Australia",
     time: "2 September (Day 1) 09:00",
+    timeEn: "2 September (Day 1) 09:00",
     status: "已预约",
     focus: "Export to Australia.",
+    focusEn: "Export to Australia.",
     notes: ["确认主要采购品类", "了解澳洲市场需求", "带公司介绍和水果品类资料"]
   },
   {
+    id: 2,
     buyer: "A. Chinatamby Co. Ltd / Votre Pote Age Ltee",
+    buyerEn: "A. Chinatamby Co. Ltd / Votre Pote Age Ltee",
     country: "Mauritius",
+    countryEn: "Mauritius",
     time: "2 September (Day 1) 11:00",
+    timeEn: "2 September (Day 1) 11:00",
     status: "已预约",
     focus: "Mauritius importer, distributor, retailer and wholesaler of fresh fruits and vegetables. Key supplier to hotels and restaurants, also manages fresh fruit and vegetable sections of Carrefour in Mauritius.",
+    focusEn: "Mauritius importer, distributor, retailer and wholesaler of fresh fruits and vegetables. Key supplier to hotels and restaurants, also manages fresh fruit and vegetable sections of Carrefour in Mauritius.",
     notes: ["重点介绍中国鲜果出口经验", "可讨论梨、柚子、柑橘及季节水果", "客户寻找长期合作的种植商、出口商和供应商", "关注酒店餐饮和零售渠道稳定供货"]
   },
   {
+    id: 3,
     buyer: "LEVAN PTE LTD",
+    buyerEn: "LEVAN PTE LTD",
     country: "Cambodia",
+    countryEn: "Cambodia",
     time: "2 September (Day 1) 13:00",
+    timeEn: "2 September (Day 1) 13:00",
     status: "已预约",
     focus: "Cambodia based importer looking for mandarin orange.",
+    focusEn: "Cambodia based importer looking for mandarin orange.",
     notes: ["重点准备 mandarin orange 资料", "确认规格、包装、季节、价格区间", "可引导客户留下 WhatsApp 便于后续报价"]
   },
   {
+    id: 4,
     buyer: "DMA FOODS / Firas",
+    buyerEn: "DMA FOODS / Firas",
     country: "Turkey / Kazakhstan route",
+    countryEn: "Turkey / Kazakhstan route",
     time: "2 September (Day 1) 14:00 待确认",
+    timeEn: "2 September (Day 1) 14:00 pending confirmation",
     status: "待确认",
     focus: "Blueberry bulk 3kg/carton. Customer asks FOB Khorgas / Kazakhstan shipment, with Turkey as final destination documents.",
+    focusEn: "Blueberry bulk 3kg/carton. Customer asks FOB Khorgas / Kazakhstan shipment, with Turkey as final destination documents.",
     notes: ["客户关心 high quality、shelf life、FOB Kazakhstan shipment details", "客户表示 they will take care of shipment from Khorgas, Kazakhstan", "文件要求：all documents are Turkey", "香港面谈重点：付款条款、风险责任、单证要求、FOB霍尔果斯可行性", "已改约：We already have a meeting scheduled at 13:00 on Sept. 2. Would 14:00 work for you instead? 等待回复"]
   }
 ];
@@ -277,6 +297,8 @@ export default function App() {
   const [aiOutput, setAiOutput] = useState("");
   const [showSampleCard, setShowSampleCard] = useState(false);
   const [showQuickCard, setShowQuickCard] = useState(false);
+  const [showMeetingCard, setShowMeetingCard] = useState(false);
+  const [meetingDraft, setMeetingDraft] = useState(null);
   const [actionHint, setActionHint] = useState("");
   const [actionState, setActionState] = useState({});
   const [speakingText, setSpeakingText] = useState("");
@@ -383,6 +405,7 @@ export default function App() {
   const checklist = Array.isArray(state.checklist) ? state.checklist : [];
   const staffRestaurants = Array.isArray(state.restaurants?.staff) ? state.restaurants.staff : [];
   const clientRestaurants = Array.isArray(state.restaurants?.client) ? state.restaurants.client : [];
+  const meetings = Array.isArray(state.reception) && state.reception.length > 0 ? state.reception : meetingSchedules;
 
   const selectedTravel = travel.find((t, idx) => (t.id ?? idx + 1) === selectedTravelId) || travel[0];
   const selectedChecklist = checklist.find((i) => i.id === selectedChecklistId) || checklist[0];
@@ -453,6 +476,60 @@ export default function App() {
   const deleteSample = (id) => {
     if (!window.confirm("确定删除这个样品吗？")) return;
     setState((prev) => ({ ...prev, samples: prev.samples.filter((s) => s.id !== id) }));
+  };
+
+  const persistMeetings = (updater) => {
+    setState((prev) => {
+      const current = Array.isArray(prev.reception) && prev.reception.length > 0 ? prev.reception : meetingSchedules;
+      return { ...prev, reception: updater(current) };
+    });
+  };
+
+  const openMeetingEditor = (meeting) => {
+    setMeetingDraft({
+      id: meeting?.id || Date.now(),
+      buyer: meeting?.buyer || "",
+      buyerEn: meeting?.buyerEn || meeting?.buyer || "",
+      country: meeting?.country || "",
+      countryEn: meeting?.countryEn || meeting?.country || "",
+      time: meeting?.time || "",
+      timeEn: meeting?.timeEn || meeting?.time || "",
+      status: meeting?.status || "已预约",
+      focus: meeting?.focus || "",
+      focusEn: meeting?.focusEn || meeting?.focus || "",
+      notesText: Array.isArray(meeting?.notes) ? meeting.notes.join("\n") : "",
+      notesEnText: Array.isArray(meeting?.notesEn) ? meeting.notesEn.join("\n") : ""
+    });
+    setShowMeetingCard(true);
+  };
+
+  const saveMeeting = () => {
+    if (!meetingDraft?.buyer?.trim()) return;
+    const nextMeeting = {
+      id: meetingDraft.id,
+      buyer: meetingDraft.buyer.trim(),
+      buyerEn: meetingDraft.buyerEn.trim(),
+      country: meetingDraft.country.trim(),
+      countryEn: meetingDraft.countryEn.trim(),
+      time: meetingDraft.time.trim(),
+      timeEn: meetingDraft.timeEn.trim(),
+      status: meetingDraft.status,
+      focus: meetingDraft.focus.trim(),
+      focusEn: meetingDraft.focusEn.trim(),
+      notes: meetingDraft.notesText.split("\n").map((item) => item.trim()).filter(Boolean),
+      notesEn: meetingDraft.notesEnText.split("\n").map((item) => item.trim()).filter(Boolean)
+    };
+    persistMeetings((current) => {
+      const exists = current.some((item) => item.id === nextMeeting.id);
+      return exists ? current.map((item) => (item.id === nextMeeting.id ? nextMeeting : item)) : [nextMeeting, ...current];
+    });
+    setShowMeetingCard(false);
+    setMeetingDraft(null);
+  };
+
+  const deleteMeeting = (id) => {
+    if (!window.confirm("确定删除这个接待安排吗？")) return;
+    persistMeetings((current) => current.filter((item) => item.id !== id));
   };
 
   const generateAI = () => {
@@ -605,25 +682,45 @@ export default function App() {
         )}
 
         {activeTab === "接待安排" && (
-          <Card title="接待安排">
+          <Card title="接待安排" action={<button className="primary small" onClick={() => openMeetingEditor(null)}>新增接待</button>}>
             <div className="meeting-board">
-              {meetingSchedules.map((meeting) => (
+              {meetings.map((meeting) => (
                 <article className={meeting.status === "待确认" ? "meeting-card pending" : "meeting-card"} key={meeting.buyer}>
                   <div className="meeting-top">
                     <div>
                       <span className="meeting-status">{meeting.status}</span>
                       <h3>{meeting.buyer}</h3>
+                      <p className="meeting-en">{meeting.buyerEn || meeting.buyer}</p>
                     </div>
                     <div className="meeting-time">{meeting.time}</div>
                   </div>
                   <div className="meeting-meta">
-                    <span>国家 / 路线</span>
-                    <strong>{meeting.country}</strong>
+                    <span>日期时间 Date & Time</span>
+                    <strong>{meeting.time}</strong>
+                    <small>{meeting.timeEn || meeting.time}</small>
                   </div>
-                  <div className="meeting-focus">{meeting.focus}</div>
+                  <div className="meeting-meta">
+                    <span>国家 / 路线 Country / Route</span>
+                    <strong>{meeting.country}</strong>
+                    <small>{meeting.countryEn || meeting.country}</small>
+                  </div>
+                  <div className="meeting-focus">
+                    <strong>需求 Demand</strong>
+                    <p>{meeting.focus}</p>
+                    <p className="meeting-en">{meeting.focusEn || meeting.focus}</p>
+                  </div>
                   <ul className="meeting-notes">
                     {meeting.notes.map((note) => <li key={note}>{note}</li>)}
                   </ul>
+                  {Array.isArray(meeting.notesEn) && meeting.notesEn.length > 0 && (
+                    <ul className="meeting-notes english">
+                      {meeting.notesEn.map((note) => <li key={note}>{note}</li>)}
+                    </ul>
+                  )}
+                  <div className="meeting-actions">
+                    <button className="secondary small" onClick={() => openMeetingEditor(meeting)}>编辑</button>
+                    <button className="secondary small" onClick={() => deleteMeeting(meeting.id)}>删除</button>
+                  </div>
                 </article>
               ))}
             </div>
@@ -733,6 +830,36 @@ export default function App() {
               </div>
             </div>
           </Card>
+        )}
+
+        {showMeetingCard && meetingDraft && (
+          <div className="modal-backdrop" onClick={() => setShowMeetingCard(false)}>
+            <div className="modal" onClick={(e) => e.stopPropagation()}>
+              <div className="modal-head">
+                <h2>接待安排编辑</h2>
+                <button className="icon-button" onClick={() => setShowMeetingCard(false)}>×</button>
+              </div>
+              <div className="modal-grid">
+                <label>买家/公司 中文<input value={meetingDraft.buyer} onChange={(e) => setMeetingDraft((p) => ({ ...p, buyer: e.target.value }))} /></label>
+                <label>Buyer / Company English<input value={meetingDraft.buyerEn} onChange={(e) => setMeetingDraft((p) => ({ ...p, buyerEn: e.target.value }))} /></label>
+                <label>日期时间 中文<input value={meetingDraft.time} onChange={(e) => setMeetingDraft((p) => ({ ...p, time: e.target.value }))} /></label>
+                <label>Date & Time English<input value={meetingDraft.timeEn} onChange={(e) => setMeetingDraft((p) => ({ ...p, timeEn: e.target.value }))} /></label>
+                <label>国家/路线 中文<input value={meetingDraft.country} onChange={(e) => setMeetingDraft((p) => ({ ...p, country: e.target.value }))} /></label>
+                <label>Country / Route English<input value={meetingDraft.countryEn} onChange={(e) => setMeetingDraft((p) => ({ ...p, countryEn: e.target.value }))} /></label>
+                <label>状态<select value={meetingDraft.status} onChange={(e) => setMeetingDraft((p) => ({ ...p, status: e.target.value }))}><option value="已预约">已预约</option><option value="待确认">待确认</option><option value="需改时间">需改时间</option><option value="已完成">已完成</option></select></label>
+              </div>
+              <div className="modal-grid">
+                <label>需求 中文<textarea value={meetingDraft.focus} onChange={(e) => setMeetingDraft((p) => ({ ...p, focus: e.target.value }))} /></label>
+                <label>Demand English<textarea value={meetingDraft.focusEn} onChange={(e) => setMeetingDraft((p) => ({ ...p, focusEn: e.target.value }))} /></label>
+                <label>备注 中文（一行一条）<textarea value={meetingDraft.notesText} onChange={(e) => setMeetingDraft((p) => ({ ...p, notesText: e.target.value }))} /></label>
+                <label>Notes English（一行一条）<textarea value={meetingDraft.notesEnText} onChange={(e) => setMeetingDraft((p) => ({ ...p, notesEnText: e.target.value }))} /></label>
+              </div>
+              <div className="modal-actions">
+                <button className="secondary" onClick={() => setShowMeetingCard(false)}>取消</button>
+                <button className="primary" onClick={saveMeeting}>保存</button>
+              </div>
+            </div>
+          </div>
         )}
 
         {showShareSetup && (
