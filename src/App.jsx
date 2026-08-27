@@ -291,24 +291,41 @@ function loadState() {
   return defaultDrafts;
 }
 
-function normalizeReceptionMeetings(items) {
-  if (!Array.isArray(items)) return items;
-  const normalized = items.map((item) => {
+function receptionKey(item) {
+  if (!item) return "";
+  return item.id ? `id:${item.id}` : `buyer:${item.buyer || item.buyerEn || ""}`;
+}
+
+function normalizeReceptionMeetings(items, deletedIds = []) {
+  const deletedSet = new Set(Array.isArray(deletedIds) ? deletedIds : []);
+  const merged = new Map();
+
+  meetingSchedules.forEach((item) => {
+    if (!deletedSet.has(item.id)) merged.set(receptionKey(item), item);
+  });
+
+  if (Array.isArray(items)) {
+    items.forEach((item) => {
+      if (!item || deletedSet.has(item.id)) return;
+      const key = receptionKey(item);
+      merged.set(key, { ...(merged.get(key) || {}), ...item });
+    });
+  }
+
+  return Array.from(merged.values()).map((item) => {
     const isDma = item.buyer === "DMA FOODS / Firas" || item.buyerEn === "DMA FOODS / Firas";
     const isOldTime = item.time === "2 September (Day 1) 14:00 待确认" || item.timeEn === "2 September (Day 1) 14:00 pending confirmation";
     if (!isDma) return item;
     return {
       ...item,
-      time: isOldTime ? "3 September (Day 2) 13:00" : item.time,
-      timeEn: isOldTime ? "3 September (Day 2) 13:00" : item.timeEn,
+      time: isOldTime ? "3 September (Day 2) 13:00" : (item.time || "3 September (Day 2) 13:00"),
+      timeEn: isOldTime ? "3 September (Day 2) 13:00" : (item.timeEn || "3 September (Day 2) 13:00"),
       status: "已预约",
       notes: Array.isArray(item.notes)
         ? item.notes.map((note) => note.includes("已改约") ? "预约时间改为：9月3日 下午1点" : note)
         : item.notes
     };
   });
-  const hasCambodia1400 = normalized.some((item) => item.id === 5 || item.buyer === "柬埔寨客户（合作过）" || item.buyerEn === "Cambodia customer (existing customer)");
-  return hasCambodia1400 ? normalized : [...normalized, meetingSchedules.find((item) => item.id === 5)];
 }
 
 export default function App() {
@@ -356,7 +373,7 @@ export default function App() {
       .then((data) => {
         if (cancelled) return;
         if (data) {
-          setState((prev) => ({ ...prev, ...data, reception: normalizeReceptionMeetings(data.reception) }));
+          setState((prev) => ({ ...prev, ...data, reception: normalizeReceptionMeetings(data.reception, data.deletedReceptionIds) }));
           setAiOutput(data.aiOutput || "");
           setSyncStatus("已连接共享数据");
         } else {
@@ -397,7 +414,7 @@ export default function App() {
       loadRemoteState(shareConfig)
         .then((data) => {
           if (!data) return;
-          setState((prev) => ({ ...prev, ...data, reception: normalizeReceptionMeetings(data.reception) }));
+          setState((prev) => ({ ...prev, ...data, reception: normalizeReceptionMeetings(data.reception, data.deletedReceptionIds) }));
           setAiOutput(data.aiOutput || "");
         })
         .catch(() => setSyncStatus("自动同步失败，稍后重试"));
@@ -438,7 +455,7 @@ export default function App() {
   const checklist = Array.isArray(state.checklist) ? state.checklist : [];
   const staffRestaurants = Array.isArray(state.restaurants?.staff) ? state.restaurants.staff : [];
   const clientRestaurants = Array.isArray(state.restaurants?.client) ? state.restaurants.client : [];
-  const meetings = Array.isArray(state.reception) && state.reception.length > 0 ? state.reception : meetingSchedules;
+  const meetings = normalizeReceptionMeetings(state.reception, state.deletedReceptionIds);
 
   const selectedTravel = travel.find((t, idx) => (t.id ?? idx + 1) === selectedTravelId) || travel[0];
   const selectedChecklist = checklist.find((i) => i.id === selectedChecklistId) || checklist[0];
@@ -513,7 +530,7 @@ export default function App() {
 
   const persistMeetings = (updater) => {
     setState((prev) => {
-      const current = Array.isArray(prev.reception) && prev.reception.length > 0 ? prev.reception : meetingSchedules;
+      const current = normalizeReceptionMeetings(prev.reception, prev.deletedReceptionIds);
       return { ...prev, reception: updater(current) };
     });
   };
@@ -556,13 +573,21 @@ export default function App() {
       const exists = current.some((item) => item.id === nextMeeting.id);
       return exists ? current.map((item) => (item.id === nextMeeting.id ? nextMeeting : item)) : [nextMeeting, ...current];
     });
+    setState((prev) => ({ ...prev, deletedReceptionIds: (prev.deletedReceptionIds || []).filter((id) => id !== nextMeeting.id) }));
     setShowMeetingCard(false);
     setMeetingDraft(null);
   };
 
   const deleteMeeting = (id) => {
     if (!window.confirm("确定删除这个接待安排吗？")) return;
-    persistMeetings((current) => current.filter((item) => item.id !== id));
+    setState((prev) => {
+      const current = normalizeReceptionMeetings(prev.reception, prev.deletedReceptionIds);
+      return {
+        ...prev,
+        deletedReceptionIds: Array.from(new Set([...(prev.deletedReceptionIds || []), id])),
+        reception: current.filter((item) => item.id !== id)
+      };
+    });
   };
 
   const generateAI = () => {
