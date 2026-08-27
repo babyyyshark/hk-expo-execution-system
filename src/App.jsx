@@ -102,12 +102,12 @@ const meetingSchedules = [
     buyerEn: "DMA FOODS / Firas",
     country: "Turkey / Kazakhstan route",
     countryEn: "Turkey / Kazakhstan route",
-    time: "2 September (Day 1) 14:00 待确认",
-    timeEn: "2 September (Day 1) 14:00 pending confirmation",
+    time: "3 September (Day 2) 13:00",
+    timeEn: "3 September (Day 2) 13:00",
     status: "待确认",
     focus: "Blueberry bulk 3kg/carton. Customer asks FOB Khorgas / Kazakhstan shipment, with Turkey as final destination documents.",
     focusEn: "Blueberry bulk 3kg/carton. Customer asks FOB Khorgas / Kazakhstan shipment, with Turkey as final destination documents.",
-    notes: ["客户关心 high quality、shelf life、FOB Kazakhstan shipment details", "客户表示 they will take care of shipment from Khorgas, Kazakhstan", "文件要求：all documents are Turkey", "香港面谈重点：付款条款、风险责任、单证要求、FOB霍尔果斯可行性", "已改约：We already have a meeting scheduled at 13:00 on Sept. 2. Would 14:00 work for you instead? 等待回复"]
+    notes: ["客户关心 high quality、shelf life、FOB Kazakhstan shipment details", "客户表示 they will take care of shipment from Khorgas, Kazakhstan", "文件要求：all documents are Turkey", "香港面谈重点：付款条款、风险责任、单证要求、FOB霍尔果斯可行性", "预约时间改为：9月3日 下午1点"]
   }
 ];
 const englishSections = [
@@ -278,6 +278,23 @@ function loadState() {
   return defaultDrafts;
 }
 
+function normalizeReceptionMeetings(items) {
+  if (!Array.isArray(items)) return items;
+  return items.map((item) => {
+    const isDma = item.buyer === "DMA FOODS / Firas" || item.buyerEn === "DMA FOODS / Firas";
+    const isOldTime = item.time === "2 September (Day 1) 14:00 待确认" || item.timeEn === "2 September (Day 1) 14:00 pending confirmation";
+    if (!isDma || !isOldTime) return item;
+    return {
+      ...item,
+      time: "3 September (Day 2) 13:00",
+      timeEn: "3 September (Day 2) 13:00",
+      notes: Array.isArray(item.notes)
+        ? item.notes.map((note) => note.includes("已改约") ? "预约时间改为：9月3日 下午1点" : note)
+        : item.notes
+    };
+  });
+}
+
 export default function App() {
   const [state, setState] = useState(loadState);
   const [isHydrated, setIsHydrated] = useState(false);
@@ -323,7 +340,7 @@ export default function App() {
       .then((data) => {
         if (cancelled) return;
         if (data) {
-          setState((prev) => ({ ...prev, ...data }));
+          setState((prev) => ({ ...prev, ...data, reception: normalizeReceptionMeetings(data.reception) }));
           setAiOutput(data.aiOutput || "");
           setSyncStatus("已连接共享数据");
         } else {
@@ -364,7 +381,7 @@ export default function App() {
       loadRemoteState(shareConfig)
         .then((data) => {
           if (!data) return;
-          setState((prev) => ({ ...prev, ...data }));
+          setState((prev) => ({ ...prev, ...data, reception: normalizeReceptionMeetings(data.reception) }));
           setAiOutput(data.aiOutput || "");
         })
         .catch(() => setSyncStatus("自动同步失败，稍后重试"));
