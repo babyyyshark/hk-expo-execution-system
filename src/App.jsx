@@ -104,10 +104,23 @@ const meetingSchedules = [
     countryEn: "Turkey / Kazakhstan route",
     time: "3 September (Day 2) 13:00",
     timeEn: "3 September (Day 2) 13:00",
-    status: "待确认",
+    status: "已预约",
     focus: "Blueberry bulk 3kg/carton. Customer asks FOB Khorgas / Kazakhstan shipment, with Turkey as final destination documents.",
     focusEn: "Blueberry bulk 3kg/carton. Customer asks FOB Khorgas / Kazakhstan shipment, with Turkey as final destination documents.",
     notes: ["客户关心 high quality、shelf life、FOB Kazakhstan shipment details", "客户表示 they will take care of shipment from Khorgas, Kazakhstan", "文件要求：all documents are Turkey", "香港面谈重点：付款条款、风险责任、单证要求、FOB霍尔果斯可行性", "预约时间改为：9月3日 下午1点"]
+  },
+  {
+    id: 5,
+    buyer: "柬埔寨客户（合作过）",
+    buyerEn: "Cambodia customer (existing customer)",
+    country: "柬埔寨",
+    countryEn: "Cambodia",
+    time: "2 September (Day 1) 14:00",
+    timeEn: "2 September (Day 1) 14:00",
+    status: "已预约",
+    focus: "合作过的柬埔寨客户，重点沟通后续订单和本季水果需求。",
+    focusEn: "Existing Cambodia customer. Focus on follow-up orders and seasonal fruit demand.",
+    notes: ["确认今年采购计划", "重点沟通柑橘/季节性水果", "了解价格、规格、包装和出货时间要求"]
   }
 ];
 const englishSections = [
@@ -280,19 +293,22 @@ function loadState() {
 
 function normalizeReceptionMeetings(items) {
   if (!Array.isArray(items)) return items;
-  return items.map((item) => {
+  const normalized = items.map((item) => {
     const isDma = item.buyer === "DMA FOODS / Firas" || item.buyerEn === "DMA FOODS / Firas";
     const isOldTime = item.time === "2 September (Day 1) 14:00 待确认" || item.timeEn === "2 September (Day 1) 14:00 pending confirmation";
-    if (!isDma || !isOldTime) return item;
+    if (!isDma) return item;
     return {
       ...item,
-      time: "3 September (Day 2) 13:00",
-      timeEn: "3 September (Day 2) 13:00",
+      time: isOldTime ? "3 September (Day 2) 13:00" : item.time,
+      timeEn: isOldTime ? "3 September (Day 2) 13:00" : item.timeEn,
+      status: "已预约",
       notes: Array.isArray(item.notes)
         ? item.notes.map((note) => note.includes("已改约") ? "预约时间改为：9月3日 下午1点" : note)
         : item.notes
     };
   });
+  const hasCambodia1400 = normalized.some((item) => item.id === 5 || item.buyer === "柬埔寨客户（合作过）" || item.buyerEn === "Cambodia customer (existing customer)");
+  return hasCambodia1400 ? normalized : [...normalized, meetingSchedules.find((item) => item.id === 5)];
 }
 
 export default function App() {
